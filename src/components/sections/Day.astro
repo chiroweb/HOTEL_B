@@ -1,10 +1,99 @@
 ---
+import { Picture } from 'astro:assets';
+
 import SectionWrapper from '../SectionWrapper.astro';
+import { getImage } from '../../lib/asset';
+import '../../styles/day.css';
+
+interface Frame {
+  slot: 'FLOW-MORNING' | 'FLOW-SURF' | 'FLOW-WALK' | 'FLOW-LIGHT';
+  time: string;
+  label: string;
+  copyKo: string;
+}
+
+const frames: Frame[] = [
+  {
+    slot: 'FLOW-MORNING',
+    time: '06:12',
+    label: 'Morning',
+    copyKo: '하루는 바다에서 시작된다.',
+  },
+  {
+    slot: 'FLOW-SURF',
+    time: '13:40',
+    label: 'Surf',
+    copyKo: '한낮은 잠시 멈추어 선다.',
+  },
+  {
+    slot: 'FLOW-WALK',
+    time: '18:27',
+    label: 'Walk',
+    copyKo: '오후의 빛은 길게 늘어진다.',
+  },
+  {
+    slot: 'FLOW-LIGHT',
+    time: '21:05',
+    label: 'Light',
+    copyKo: '밤은 해안에서 잠든다.',
+  },
+];
+
+const images = frames.map((f) => ({ frame: f, spec: getImage(f.slot) }));
 ---
 
 <SectionWrapper id="day" index="03" title="FLOW" pinned>
-  <span slot="display" class="display-md">Songjeong, A Day in Light</span>
-  <span slot="display-ko" class="display-ko-sm" lang="ko">
-    하루는 바다에서 시작되고, 해안에서 끝난다.
+  <span slot="display" class="display-md visually-hidden" data-reveal="display">
+    Songjeong, A Day in Light
   </span>
+
+  <div class="day-track">
+    {
+      images.map(({ frame, spec }) => (
+        <article class="day-frame" aria-label={`${frame.time} ${frame.label}`}>
+          <Picture
+            src={spec.import}
+            alt={spec.alt}
+            widths={[960, 1440, 1920]}
+            sizes={spec.sizes}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="label-mono day-frame__caption numeral">
+            {frame.time} / {frame.label.toUpperCase()}
+          </span>
+        </article>
+      ))
+    }
+  </div>
+
+  <aside class="day-meta">
+    <div class="day-time-stack">
+      {
+        frames.map((frame) => (
+          <span class="label-mono numeral" data-active="false">
+            {frame.time} / {frame.label.toUpperCase()}
+          </span>
+        ))
+      }
+    </div>
+    <p class="day-meta__copy display-ko-sm" lang="ko">
+      하루는 바다에서 시작되고, 해안에서 끝난다.
+    </p>
+  </aside>
+
+  <div class="day-progress" aria-hidden="true">
+    <span class="day-progress__fill"></span>
+  </div>
 </SectionWrapper>
+
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { dayModule } from '../../lib/motion/day';
+
+  const el = document.getElementById('day');
+  if (el) register(dayModule, el as HTMLElement, currentMode());
+</script>

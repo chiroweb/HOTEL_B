@@ -1,0 +1,157 @@
+/* ============================================================================
+ * DAY — pinned horizontal time film. The site's main "wow" moment.
+ *
+ * Critical rule (plan §Unit 9): pin the OUTER section, animate the INNER
+ * track. Never animate the pinned element itself.
+ *
+ * Layer discipline: will-change only on the active track. Section uses
+ * contain: layout paint while inactive.
+ *
+ * Carousel rejection: no dots, no arrows, no autoplay timer, no slide UI.
+ * The frame is "edited film", not "browsable items" (R2).
+ * ========================================================================== */
+
+#day {
+  position: relative;
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  contain: layout paint;
+  overflow: hidden;
+}
+
+#day.is-stub {
+  display: grid;
+}
+
+#day.is-stub .section__heading {
+  align-self: center;
+  justify-self: center;
+  padding: 0 clamp(2rem, 6vw, 6rem);
+  text-align: center;
+  max-width: 32rem;
+}
+
+.day-track {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  width: max-content;
+  gap: var(--track-gutter);
+  padding: clamp(5rem, 11vh, 7rem) clamp(2rem, 6vw, 6rem);
+}
+
+.day-frame {
+  position: relative;
+  flex: 0 0 80vw;
+  max-width: 80vw;
+  aspect-ratio: 21 / 9;
+  height: auto;
+  background: var(--color-bone);
+  border: var(--hairline) solid var(--color-hair);
+  overflow: hidden;
+}
+
+.day-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.day-frame__caption {
+  position: absolute;
+  z-index: 2;
+  bottom: clamp(1rem, 2.5vh, 1.5rem);
+  left: clamp(1rem, 2.5vw, 1.75rem);
+  color: var(--color-ivory);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.day-meta {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  left: clamp(2rem, 6vw, 6rem);
+  display: grid;
+  gap: 0.75rem;
+  max-width: min(28rem, 60vw);
+  pointer-events: none;
+}
+
+.day-time-stack {
+  position: relative;
+  display: grid;
+  height: 1.25rem;
+}
+
+.day-time-stack > .label-mono {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity var(--duration-time-label) var(--ease-editorial);
+}
+
+.day-time-stack > .label-mono[data-active='true'] {
+  opacity: 1;
+}
+
+.day-meta__copy {
+  color: var(--color-ink);
+  opacity: 0.72;
+  margin: 0;
+}
+
+.day-progress {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--progress-hairline-h);
+  background: var(--color-hair);
+}
+
+.day-progress__fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--color-brass);
+  transform-origin: left;
+}
+
+#day .section__index {
+  z-index: 4;
+}
+
+/* Reduced-motion: stack frames vertically with their captions. No pin. */
+@media (prefers-reduced-motion: reduce) {
+  #day {
+    height: auto;
+    min-height: auto;
+  }
+  .day-track {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    padding: 5rem clamp(1rem, 5vw, 3rem) 4rem;
+  }
+  .day-frame {
+    flex: 0 0 auto;
+    max-width: none;
+    width: 100%;
+  }
+  .day-meta {
+    position: static;
+    margin: 0 clamp(1rem, 5vw, 3rem) 1.5rem;
+    max-width: none;
+  }
+  .day-time-stack > .label-mono[data-reduced-show='true'] {
+    opacity: 1;
+  }
+  .day-progress {
+    display: none;
+  }
+}

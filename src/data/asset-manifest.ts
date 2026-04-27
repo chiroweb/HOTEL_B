@@ -19,6 +19,10 @@ import type { ImageMetadata } from 'astro';
 import prologuePoster from '../assets/placeholders/PROLOGUE-01-poster.jpg';
 import landmark01 from '../assets/placeholders/LANDMARK-01.jpg';
 import landmark02 from '../assets/placeholders/LANDMARK-02.jpg';
+import flowMorning from '../assets/placeholders/FLOW-MORNING.jpg';
+import flowSurf from '../assets/placeholders/FLOW-SURF.jpg';
+import flowWalk from '../assets/placeholders/FLOW-WALK.jpg';
+import flowLight from '../assets/placeholders/FLOW-LIGHT.jpg';
 
 // ---------------------------------------------------------------------------
 // Slot identifiers — extended in Phase 2 (Units 8–12) as sections are built.
@@ -27,10 +31,13 @@ import landmark02 from '../assets/placeholders/LANDMARK-02.jpg';
 export type ImageSlotId =
   | 'PROLOGUE-01'
   | 'LANDMARK-01'
-  | 'LANDMARK-02';
+  | 'LANDMARK-02'
+  | 'FLOW-MORNING'
+  | 'FLOW-SURF'
+  | 'FLOW-WALK'
+  | 'FLOW-LIGHT';
 // Reserved (added as sections graduate):
 //   'LANDMARK-03'
-// | 'FLOW-MORNING' | 'FLOW-SURF' | 'FLOW-WALK' | 'FLOW-LIGHT'
 // | 'WINDOW-01' | 'WINDOW-02' | 'WINDOW-03'
 // | 'SPACE-HERO' | `SPACE-${string}`
 // | 'EPILOGUE-01'
@@ -105,6 +112,38 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     sizes: '(max-width: 768px) 100vw, 40vw',
     widths: [480, 720, 1200],
     tone: 'Facade detail — material/glass/edge close-up. Macro feel.',
+  },
+  'FLOW-MORNING': {
+    kind: 'image',
+    import: flowMorning,
+    alt: 'Songjeong coast at first light, cool-warm gradient, quiet horizon (placeholder).',
+    sizes: '80vw',
+    widths: [960, 1440, 1920],
+    tone: '06:12 — cool first light. Cool-warm gradient, gentle horizon line.',
+  },
+  'FLOW-SURF': {
+    kind: 'image',
+    import: flowSurf,
+    alt: 'Songjeong coast at mid-day, warmer cream tones, restrained motion (placeholder).',
+    sizes: '80vw',
+    widths: [960, 1440, 1920],
+    tone: '13:40 — mid-day quiet. Warmer cream, surf line implied.',
+  },
+  'FLOW-WALK': {
+    kind: 'image',
+    import: flowWalk,
+    alt: 'Songjeong coast at golden hour, oranges and burnt sienna, late afternoon (placeholder).',
+    sizes: '80vw',
+    widths: [960, 1440, 1920],
+    tone: '18:27 — golden hour walking pace. Oranges + burnt sienna, restrained.',
+  },
+  'FLOW-LIGHT': {
+    kind: 'image',
+    import: flowLight,
+    alt: 'Songjeong coast at blue hour, deep navy with warm light flecks (placeholder).',
+    sizes: '80vw',
+    widths: [960, 1440, 1920],
+    tone: '21:05 — blue hour. Deep navy with brass-light flecks. Lights on.',
   },
 };
 
