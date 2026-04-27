@@ -1,0 +1,225 @@
+/* ============================================================================
+ * SPACE — three-state crossing transformation.
+ *
+ *   State 1 (sense)     image right · evocative copy left
+ *   State 2 (structure) image crosses left and dominates · sub-cats appear right
+ *   State 3 (information) image recedes opacity 0.4 · thin line work + numerals
+ *
+ * No card-shaped elements anywhere (R6). Sub-cats render as a vertical mono
+ * list. Info layer is text + 1px hairlines only.
+ * ========================================================================== */
+
+#space {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  contain: layout paint;
+  position: relative;
+  overflow: hidden;
+}
+
+#space.is-stub {
+  display: grid;
+}
+
+#space.is-stub .section__heading {
+  align-self: center;
+  justify-self: center;
+  padding: 0 clamp(2rem, 6vw, 6rem);
+  text-align: center;
+  max-width: 32rem;
+}
+
+.space__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.space__copy {
+  position: absolute;
+  z-index: 3;
+  left: clamp(2rem, 6vw, 4rem);
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: min(32rem, 50vw);
+  display: grid;
+  gap: 0.875rem;
+  pointer-events: none;
+}
+
+.space__copy .display-lg {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.space__copy .display-ko-md {
+  color: var(--color-ink);
+  opacity: 0.72;
+  margin: 0;
+}
+
+.space__image {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: clamp(2rem, 6vw, 4rem);
+  transform: translateY(-50%);
+  width: clamp(20rem, 38vw, 32rem);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: var(--hairline) solid var(--color-hair);
+  transform-origin: center;
+}
+
+.space__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Sub-category list — appears in state 2 */
+.space__cats {
+  position: absolute;
+  z-index: 2;
+  right: clamp(2rem, 6vw, 4rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(16rem, 28vw, 22rem);
+  display: grid;
+  gap: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.space__cat {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-top: var(--hairline) solid var(--color-hair);
+  color: var(--color-ink);
+}
+
+.space__cat:last-child {
+  border-bottom: var(--hairline) solid var(--color-hair);
+}
+
+.space__cat-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.space__cat-meta {
+  text-align: right;
+  color: var(--color-ink);
+  opacity: 0.62;
+}
+
+/* Info layer — appears in state 3, replaces sub-cats area */
+.space__info {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.space__info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 2rem);
+  width: min(48rem, 88vw);
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.space__info-item {
+  display: grid;
+  gap: 0.4rem;
+  padding-top: 0.75rem;
+  border-top: var(--hairline) solid var(--color-brass);
+}
+
+.space__info-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.3vw, 1.0625rem);
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+.space__info-numerals {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.space__info-numerals span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  opacity: 0.65;
+}
+
+.space__info-note {
+  color: var(--color-ink);
+  opacity: 0.6;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+#space .section__index {
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .space__copy {
+    top: 8svh;
+    transform: none;
+    max-width: none;
+    right: clamp(2rem, 6vw, 4rem);
+  }
+  .space__image {
+    top: auto;
+    bottom: 12svh;
+    right: 50%;
+    transform: translateX(50%);
+    width: 70vw;
+  }
+}
+
+/* Reduced-motion: stack the three states vertically as separate blocks */
+@media (prefers-reduced-motion: reduce) {
+  #space {
+    height: auto;
+    min-height: auto;
+    padding: 6rem clamp(1rem, 5vw, 3rem) 4rem;
+  }
+  .space__layer {
+    position: static;
+  }
+  .space__copy,
+  .space__image,
+  .space__cats,
+  .space__info {
+    position: static;
+    transform: none;
+    opacity: 1;
+    width: 100%;
+    max-width: none;
+    margin-bottom: 2rem;
+  }
+  .space__image {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+  }
+  .space__info-grid {
+    width: 100%;
+  }
+}

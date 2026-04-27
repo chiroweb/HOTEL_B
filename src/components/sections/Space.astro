@@ -1,10 +1,74 @@
 ---
+import { Picture } from 'astro:assets';
+
 import SectionWrapper from '../SectionWrapper.astro';
+import { getImage } from '../../lib/asset';
+import { SPACE_CATEGORIES } from '../../data/space-content';
+import '../../styles/space.css';
+
+const hero = getImage('SPACE-HERO');
 ---
 
 <SectionWrapper id="space" index="05" title="THE SPACE" pinned>
-  <span slot="display" class="display-lg">Rooms Are Not the Story.<br />The Horizon Is.</span>
-  <span slot="display-ko" class="display-ko-md" lang="ko">
+  <span slot="display" class="display-lg" data-reveal="display">
+    Rooms Are Not<br />the Story.<br />The Horizon Is.
+  </span>
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
     공간은 풍경의 연장으로 설계되었다.
   </span>
+
+  <div class="space__image">
+    <Picture
+      src={hero.import}
+      alt={hero.alt}
+      widths={[600, 900, 1200]}
+      sizes={hero.sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <ul class="space__cats" aria-label="Sub-categories">
+    {
+      SPACE_CATEGORIES.map((cat) => (
+        <li class="space__cat">
+          <div>
+            <span class="space__cat-label">{cat.label}</span>
+            <span class="label-mono-sm" lang="ko"> &nbsp;{cat.labelKo}</span>
+          </div>
+          <div class="space__cat-meta label-mono-sm numeral">
+            {cat.count} &middot; {cat.area}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="space__info" aria-label="Information">
+    <div class="space__info-grid">
+      {
+        SPACE_CATEGORIES.map((cat) => (
+          <div class="space__info-item">
+            <span class="space__info-label">{cat.label}</span>
+            <div class="space__info-numerals">
+              <span class="numeral">{cat.count.toString().padStart(2, '0')} units</span>
+              <span class="numeral">{cat.area}</span>
+            </div>
+            {cat.note && <p class="space__info-note">{cat.note}</p>}
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </SectionWrapper>
+
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { spaceModule } from '../../lib/motion/space';
+
+  const el = document.getElementById('space');
+  if (el) register(spaceModule, el as HTMLElement, currentMode());
+</script>

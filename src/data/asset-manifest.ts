@@ -26,6 +26,7 @@ import flowLight from '../assets/placeholders/FLOW-LIGHT.jpg';
 import window01 from '../assets/placeholders/WINDOW-01.jpg';
 import window02 from '../assets/placeholders/WINDOW-02.jpg';
 import window03 from '../assets/placeholders/WINDOW-03.jpg';
+import spaceHero from '../assets/placeholders/SPACE-HERO.jpg';
 
 // ---------------------------------------------------------------------------
 // Slot identifiers — extended in Phase 2 (Units 8–12) as sections are built.
@@ -41,10 +42,11 @@ export type ImageSlotId =
   | 'FLOW-LIGHT'
   | 'WINDOW-01'
   | 'WINDOW-02'
-  | 'WINDOW-03';
+  | 'WINDOW-03'
+  | 'SPACE-HERO';
 // Reserved (added as sections graduate):
 //   'LANDMARK-03'
-// | 'SPACE-HERO' | `SPACE-${string}`
+// | `SPACE-${string}`
 // | 'EPILOGUE-01'
 
 export type VideoSlotId = 'PROLOGUE-01';
@@ -173,6 +175,14 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     sizes: '(max-width: 768px) 60vw, 22vw',
     widths: [320, 480, 800],
     tone: 'Cooler atmospheric detail. Floating editorial frame, second.',
+  },
+  'SPACE-HERO': {
+    kind: 'image',
+    import: spaceHero,
+    alt: 'Architectural composition of layered structural elements with brass hairline rules (placeholder).',
+    sizes: '(max-width: 768px) 100vw, 60vw',
+    widths: [600, 900, 1200],
+    tone: 'Portrait architectural — warm structural rhythm with brass hairline accents. Crosses left to dominate during state 2.',
   },
 };
 
