@@ -1,0 +1,268 @@
+---
+import Base from '../../layouts/Base.astro';
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const colors = [
+  { name: '--color-ivory', label: 'Ivory', token: 'var(--color-ivory)', textOn: 'var(--color-ink)' },
+  { name: '--color-bone',  label: 'Bone',  token: 'var(--color-bone)',  textOn: 'var(--color-ink)' },
+  { name: '--color-ink',   label: 'Ink',   token: 'var(--color-ink)',   textOn: 'var(--color-ivory)' },
+  { name: '--color-hair',  label: 'Hair',  token: 'var(--color-hair)',  textOn: 'var(--color-ink)' },
+  { name: '--color-brass', label: 'Brass', token: 'var(--color-brass)', textOn: 'var(--color-ivory)' },
+];
+---
+
+<Base title="DEV — Design Tokens" description="Design token preview (DEV only).">
+  <main class="dev-tokens">
+    <header>
+      <span class="label-mono">( DEV / TOKENS )</span>
+      <h1 class="display-md">Design Tokens</h1>
+      <p class="body-md">
+        Token preview for Songjeong Landmark (WYNDHAM). DEV-only route &mdash; gated by
+        <code>import.meta.env.DEV</code>.
+      </p>
+    </header>
+
+    <hr />
+
+    <section aria-labelledby="colors-h">
+      <span class="label-mono">( 01 / COLOR )</span>
+      <h2 id="colors-h" class="display-sm">Color</h2>
+      <p class="body-sm">
+        Brass scope rule (R4): allowed only on hairlines, mono labels, numerals, and active states.
+        Filled brass surfaces are forbidden.
+      </p>
+      <div class="swatches">
+        {
+          colors.map((c) => (
+            <div class="swatch">
+              <div class="swatch-fill" style={`background:${c.token};color:${c.textOn};`}>
+                <span class="label-mono">{c.label}</span>
+              </div>
+              <code class="label-mono-sm">{c.name}</code>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <hr />
+
+    <section aria-labelledby="type-h">
+      <span class="label-mono">( 02 / TYPE )</span>
+      <h2 id="type-h" class="display-sm">Typography</h2>
+
+      <div class="type-row">
+        <code class="label-mono-sm">.display-xl</code>
+        <p class="display-xl">The Coast</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.display-lg</code>
+        <p class="display-lg">Before the Landmark</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.display-md</code>
+        <p class="display-md">A Vertical Mark on the Shore</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.display-sm</code>
+        <p class="display-sm">Songjeong Will Remember</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.display-ko-md</code>
+        <p class="display-ko-md" lang="ko">랜드마크보다 먼저, 해안선이 있다.</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.display-ko-sm</code>
+        <p class="display-ko-sm" lang="ko">송정의 수평선 위에 세워지는 수직의 기준.</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.body-lg</code>
+        <p class="body-lg">Body large &mdash; running text in supporting copy blocks.</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.body-md</code>
+        <p class="body-md">Body medium &mdash; default reading size for most prose.</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.body-sm</code>
+        <p class="body-sm">Body small &mdash; captions, asides, mono-adjacent labels.</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.label-mono</code>
+        <p class="label-mono">( 03 / FLOW ) &mdash; 06:12 / MORNING</p>
+      </div>
+      <div class="type-row">
+        <code class="label-mono-sm">.numeral</code>
+        <p class="display-sm"><span class="numeral">06:12 13:40 18:27 21:05</span></p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section aria-labelledby="motion-h">
+      <span class="label-mono">( 03 / MOTION )</span>
+      <h2 id="motion-h" class="display-sm">Motion</h2>
+      <p class="body-sm">
+        Easing demo &mdash; three squares sliding with <code>--ease-editorial</code> at the three
+        primary durations. Frozen automatically under <code>prefers-reduced-motion: reduce</code>.
+      </p>
+      <div class="motion-grid">
+        <div class="motion-row">
+          <code class="label-mono-sm">--duration-reveal-base (820ms)</code>
+          <span class="motion-track"><span class="motion-square m-820"></span></span>
+        </div>
+        <div class="motion-row">
+          <code class="label-mono-sm">--duration-section (700ms)</code>
+          <span class="motion-track"><span class="motion-square m-700"></span></span>
+        </div>
+        <div class="motion-row">
+          <code class="label-mono-sm">--duration-state-cross (480ms)</code>
+          <span class="motion-track"><span class="motion-square m-480"></span></span>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <section aria-labelledby="structure-h">
+      <span class="label-mono">( 04 / STRUCTURE )</span>
+      <h2 id="structure-h" class="display-sm">Structure</h2>
+      <div class="structure-row">
+        <code class="label-mono-sm">--hairline (1px) &mdash; default rule</code>
+        <hr />
+      </div>
+      <div class="structure-row">
+        <code class="label-mono-sm">--hairline (1px) &mdash; brass scope</code>
+        <hr class="brass" />
+      </div>
+      <div class="structure-row">
+        <code class="label-mono-sm">--track-gutter clamp(48px, 6vw, 96px)</code>
+        <div class="track-demo">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .dev-tokens {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+    color: var(--color-ink);
+    background: var(--color-ivory);
+  }
+  header {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  hr {
+    margin: 3rem 0;
+  }
+  section {
+    display: grid;
+    gap: 1rem;
+  }
+  code {
+    color: var(--color-ink);
+    opacity: 0.55;
+  }
+
+  /* Swatches */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .swatch {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .swatch-fill {
+    aspect-ratio: 4 / 3;
+    border: var(--hairline) solid var(--color-hair);
+    display: grid;
+    place-content: end start;
+    padding: 0.75rem;
+  }
+
+  /* Type ramp rows */
+  .type-row {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 0.75rem 0;
+    border-top: var(--hairline) solid var(--color-hair);
+  }
+  .type-row p {
+    margin: 0;
+  }
+
+  /* Motion demo */
+  .motion-grid {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .motion-row {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .motion-track {
+    position: relative;
+    height: 1.5rem;
+    border-bottom: var(--hairline) solid var(--color-hair);
+  }
+  .motion-square {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--color-ink);
+    transition-property: transform;
+    transition-timing-function: var(--ease-editorial);
+  }
+  .motion-track:hover .motion-square,
+  .motion-track:focus-within .motion-square {
+    transform: translateX(calc(100% * 18));
+  }
+  .m-820 {
+    transition-duration: var(--duration-reveal-base);
+  }
+  .m-700 {
+    transition-duration: var(--duration-section);
+  }
+  .m-480 {
+    transition-duration: var(--duration-state-cross);
+  }
+
+  /* Structure demo */
+  .structure-row {
+    display: grid;
+    grid-template-columns: minmax(0, 18rem) 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 0.75rem 0;
+  }
+  .track-demo {
+    display: flex;
+    gap: var(--track-gutter);
+  }
+  .track-demo span {
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    background: var(--color-bone);
+    border: var(--hairline) solid var(--color-hair);
+  }
+</style>

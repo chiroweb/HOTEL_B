@@ -1,0 +1,60 @@
+/* ============================================================================
+ * Design tokens — Songjeong Landmark (WYNDHAM)
+ *
+ * Brass scope rule (R4)
+ *   --color-brass is allowed ONLY on:
+ *     • <hr> hairlines and 1px section dividers
+ *     • .label-mono numerals and indices
+ *     • active nav-link 1px underline
+ *     • numeric/time-label decorations (Day section)
+ *   Forbidden:
+ *     • filled backgrounds, button fills, icon fills, large text
+ *     • any decorative panel / card / overlay
+ *
+ * Colors are warm-desaturated to support cinematic photography (R12).
+ * Tailwind defaults are intentionally NOT exposed (R4, R6).
+ * ========================================================================== */
+
+@theme {
+  /* === Color (exhaustive — no other colors are exposed) === */
+  --color-ivory: #f4efe6; /* page background, primary surface */
+  --color-bone:  #e8e2d6; /* secondary surface, low-emphasis cards */
+  --color-ink:   #131211; /* primary type, dark hairlines */
+  --color-hair:  #c4baa7; /* default hairline rules, dividers */
+  --color-brass: #9d7a3c; /* accent — see scope rule above */
+
+  /* === Type families (declared in typography.css; tokens reference them) === */
+  --font-display: 'Display', 'Inter Tight', system-ui, sans-serif;
+  --font-body:    'Display', 'Pretendard', 'Inter Tight', system-ui, sans-serif;
+  --font-mono:    'Mono', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* === Motion === */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-reveal-base: 820ms;
+  --duration-section: 700ms;
+  --duration-state-cross: 480ms; /* Space section state transitions */
+  --duration-time-label: 280ms;  /* Day section time-label cross-fade */
+
+  /* === Structure === */
+  --hairline: 1px;
+  --radius-fn: 2px; /* opt-in only for functional UI controls */
+
+  /* Day-track horizontal gutter between frames */
+  --track-gutter: clamp(48px, 6vw, 96px);
+
+  /* Day-section bottom progress hairline */
+  --progress-hairline-h: 1px;
+
+  /* Per-section pin lengths (svh — small-viewport for iOS dynamic chrome) */
+  --pin-landmark: 200svh;
+  --pin-day:      400svh;
+  --pin-window:   150svh;
+  --pin-space:    300svh;
+}
+
+/* base radius is 0; rounding only opted into for functional UI via --radius-fn */
+*,
+::before,
+::after {
+  border-radius: 0;
+}

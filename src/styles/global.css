@@ -1,39 +1,63 @@
 @import 'tailwindcss';
+@import './tokens.css';
+@import './typography.css';
 
 /* ----------------------------------------------------------------------------
- * Design tokens — fully populated in Unit 2.
- * Brass scope rule (R4): --color-brass is allowed only on hairlines, mono
- * labels, numerals, and active-link state. Never as a filled background.
+ * Base — minimal global resets and platform-level reduced-motion guard.
+ * Tailwind defaults are intentionally NOT exposed (R4, R6).
  * -------------------------------------------------------------------------- */
 
-@theme {
-  /* color tokens — placeholder, finalized in Unit 2 */
-  --color-ivory: #f4efe6;
-  --color-bone: #e8e2d6;
-  --color-ink: #1a1a1a;
-  --color-hair: #c9bfae;
-  --color-brass: #a07a3a;
-
-  /* type — placeholder fonts, finalized in Unit 2 with split-loading recipe */
-  --font-display: 'Inter Tight', system-ui, sans-serif;
-  --font-body: 'Inter Tight', 'Pretendard', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-
-  /* motion */
-  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-reveal-base: 820ms;
-  --duration-section: 700ms;
-  --duration-state-cross: 480ms;
-  --duration-time-label: 280ms;
-
-  /* structure */
-  --hairline: 1px;
-  --radius-fn: 2px;
+:root {
+  color-scheme: light;
 }
 
-/* base radius is 0; rounding only opted into for functional UI via --radius-fn */
-*,
-::before,
-::after {
-  border-radius: 0;
+html {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+/* hairline rules (R6) */
+hr {
+  border: 0;
+  border-top: var(--hairline) solid var(--color-hair);
+  margin: 0;
+}
+hr.brass {
+  border-top-color: var(--color-brass);
+}
+
+/* visually-hidden helper (skip-link, screen-reader-only headings) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Platform-level reduced-motion fallback. JS engine (engine.ts) also gates
+   Lenis + ScrollTrigger separately; this is the safety net for plain CSS
+   transitions/animations declared anywhere in the project. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
