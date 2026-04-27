@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+/* ----------------------------------------------------------------------------
+ * Design tokens — fully populated in Unit 2.
+ * Brass scope rule (R4): --color-brass is allowed only on hairlines, mono
+ * labels, numerals, and active-link state. Never as a filled background.
+ * -------------------------------------------------------------------------- */
+
+@theme {
+  /* color tokens — placeholder, finalized in Unit 2 */
+  --color-ivory: #f4efe6;
+  --color-bone: #e8e2d6;
+  --color-ink: #1a1a1a;
+  --color-hair: #c9bfae;
+  --color-brass: #a07a3a;
+
+  /* type — placeholder fonts, finalized in Unit 2 with split-loading recipe */
+  --font-display: 'Inter Tight', system-ui, sans-serif;
+  --font-body: 'Inter Tight', 'Pretendard', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* motion */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-reveal-base: 820ms;
+  --duration-section: 700ms;
+  --duration-state-cross: 480ms;
+  --duration-time-label: 280ms;
+
+  /* structure */
+  --hairline: 1px;
+  --radius-fn: 2px;
+}
+
+/* base radius is 0; rounding only opted into for functional UI via --radius-fn */
+*,
+::before,
+::after {
+  border-radius: 0;
+}
