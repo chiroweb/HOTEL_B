@@ -17,14 +17,19 @@
 import type { ImageMetadata } from 'astro';
 
 import prologuePoster from '../assets/placeholders/PROLOGUE-01-poster.jpg';
+import landmark01 from '../assets/placeholders/LANDMARK-01.jpg';
+import landmark02 from '../assets/placeholders/LANDMARK-02.jpg';
 
 // ---------------------------------------------------------------------------
 // Slot identifiers — extended in Phase 2 (Units 8–12) as sections are built.
 // ---------------------------------------------------------------------------
 
-export type ImageSlotId = 'PROLOGUE-01';
-// Reserved (added in Phase 2):
-//   'LANDMARK-01' | 'LANDMARK-02' | 'LANDMARK-03'
+export type ImageSlotId =
+  | 'PROLOGUE-01'
+  | 'LANDMARK-01'
+  | 'LANDMARK-02';
+// Reserved (added as sections graduate):
+//   'LANDMARK-03'
 // | 'FLOW-MORNING' | 'FLOW-SURF' | 'FLOW-WALK' | 'FLOW-LIGHT'
 // | 'WINDOW-01' | 'WINDOW-02' | 'WINDOW-03'
 // | 'SPACE-HERO' | `SPACE-${string}`
@@ -84,6 +89,22 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     sizes: '100vw',
     widths: [480, 960, 1440, 1920],
     tone: 'Warm-desaturated coastal horizon. Brief tonal anchor for "before the landmark, there is the coast."',
+  },
+  'LANDMARK-01': {
+    kind: 'image',
+    import: landmark01,
+    alt: 'Vertical tower silhouette against a warm-cool sky gradient (placeholder).',
+    sizes: '(max-width: 768px) 100vw, 60vw',
+    widths: [540, 720, 1080],
+    tone: 'Vertical hero — camera tilt-up framing. Dawn/dusk grade, architectural not advertorial.',
+  },
+  'LANDMARK-02': {
+    kind: 'image',
+    import: landmark02,
+    alt: 'Architectural facade detail with regular grid pattern, warm-cool reflection (placeholder).',
+    sizes: '(max-width: 768px) 100vw, 40vw',
+    widths: [480, 720, 1200],
+    tone: 'Facade detail — material/glass/edge close-up. Macro feel.',
   },
 };
 

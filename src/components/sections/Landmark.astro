@@ -1,10 +1,59 @@
 ---
+import { Picture } from 'astro:assets';
+
 import SectionWrapper from '../SectionWrapper.astro';
+import { getImage } from '../../lib/asset';
+import '../../styles/landmark.css';
+
+const tower = getImage('LANDMARK-01');
+const detail = getImage('LANDMARK-02');
 ---
 
 <SectionWrapper id="landmark" index="02" title="VERTICAL">
-  <span slot="display" class="display-lg">A Vertical Mark<br />on the Shore</span>
-  <span slot="display-ko" class="display-ko-md" lang="ko">
+  <span slot="display" class="display-lg" data-reveal="display">
+    A Vertical Mark<br />on the Shore
+  </span>
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
     송정의 수평선 위에 세워지는 수직의 기준.
   </span>
+
+  <div class="landmark__stage">
+    <div class="landmark__tower">
+      <Picture
+        src={tower.import}
+        alt={tower.alt}
+        widths={[540, 720, 1080]}
+        sizes={tower.sizes}
+        formats={['avif', 'webp']}
+        fallbackFormat="jpg"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="landmark__detail" aria-hidden="true">
+      <Picture
+        src={detail.import}
+        alt=""
+        widths={[480, 720, 1200]}
+        sizes={detail.sizes}
+        formats={['avif', 'webp']}
+        fallbackFormat="jpg"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+
+  <figcaption class="landmark__caption">
+    <span class="label-mono">Facade · glass · light</span>
+  </figcaption>
 </SectionWrapper>
+
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { landmarkModule } from '../../lib/motion/landmark';
+
+  const el = document.getElementById('landmark');
+  if (el) register(landmarkModule, el as HTMLElement, currentMode());
+</script>
