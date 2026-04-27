@@ -99,18 +99,18 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'PROLOGUE-01': {
     kind: 'image',
     import: prologuePoster,
-    alt: 'Songjeong coastal horizon at quiet daylight, warm-desaturated tone (placeholder).',
+    alt: 'Songjeong coast at first light, small pavilion silhouette on the headland with waves washing onto the sand.',
     sizes: '100vw',
     widths: [480, 960, 1440, 1920],
-    tone: 'Warm-desaturated coastal horizon. Brief tonal anchor for "before the landmark, there is the coast."',
+    tone: 'Sunrise over Songjeong, asymmetric framing with pavilion at left. Warm-desaturated grade.',
   },
   'LANDMARK-01': {
     kind: 'image',
     import: landmark01,
-    alt: 'Vertical tower silhouette against a warm-cool sky gradient (placeholder).',
+    alt: 'Twin towers of the WYNDHAM Songjeong rising above the coastal promenade at dusk.',
     sizes: '(max-width: 768px) 100vw, 60vw',
     widths: [540, 720, 1080],
-    tone: 'Vertical hero — camera tilt-up framing. Dawn/dusk grade, architectural not advertorial.',
+    tone: 'Twin tower silhouette at dusk. INTERIM placeholder — preserves architectural massing; final photography should remove the lit media-facade panel and shoot at blue/dawn hour for a non-advertorial register.',
   },
   'LANDMARK-02': {
     kind: 'image',
@@ -123,10 +123,10 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'FLOW-MORNING': {
     kind: 'image',
     import: flowMorning,
-    alt: 'Songjeong coast at first light, cool-warm gradient, quiet horizon (placeholder).',
+    alt: 'Songjeong shoreline at sunrise — sun low on the eastern horizon, soft surf reflections on wet sand.',
     sizes: '80vw',
     widths: [960, 1440, 1920],
-    tone: '06:12 — cool first light. Cool-warm gradient, gentle horizon line.',
+    tone: '06:12 — east-facing sunrise. Warm horizon glow with reflections on receding tide.',
   },
   'FLOW-SURF': {
     kind: 'image',
@@ -139,10 +139,10 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'FLOW-WALK': {
     kind: 'image',
     import: flowWalk,
-    alt: 'Songjeong coast at golden hour, oranges and burnt sienna, late afternoon (placeholder).',
+    alt: 'Songjeong beach at late afternoon with surfers and the Busan coastline beyond the bay.',
     sizes: '80vw',
     widths: [960, 1440, 1920],
-    tone: '18:27 — golden hour walking pace. Oranges + burnt sienna, restrained.',
+    tone: '18:27 — golden-hour walking pace. Long shadows, restrained color, distant skyline as context.',
   },
   'FLOW-LIGHT': {
     kind: 'image',
@@ -155,10 +155,10 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'WINDOW-01': {
     kind: 'image',
     import: window01,
-    alt: 'Warm interior view framed by a window onto a distant coastal horizon (placeholder).',
+    alt: 'A guest stands at the floor-to-ceiling window of a Songjeong suite, looking out across the bay toward the headland.',
     sizes: '100vw',
     widths: [960, 1440, 1920],
-    tone: 'Quiet interior with implied window frame; horizon line visible. View dominant, room incidental.',
+    tone: 'Soft morning light. Bedding and chair recede into warm beige; the view through the window is the subject.',
   },
   'WINDOW-02': {
     kind: 'image',
