@@ -1,0 +1,155 @@
+---
+/**
+ * Phase 1.5 — Day section single-frame stub.
+ *
+ * Purpose: validate that PROLOGUE-derived design tokens generalize to
+ * non-PROLOGUE motion grammar BEFORE Phase 2 commits to all six sections.
+ * If a token is missing here (a track-gutter not expressible by clamp(),
+ * a state-cross duration distinct from reveal-base, etc.) we add it to
+ * tokens.css now — not via Phase 2 retrofit (Unit 9 wave).
+ *
+ * Tokens exercised by this stub:
+ *   --color-ivory · --color-bone · --color-hair · --color-brass
+ *   --font-mono · --hairline · --track-gutter · --progress-hairline-h
+ *   --duration-time-label · --ease-editorial · --pin-day (read for parity)
+ *
+ * DEV-only: returns 404 in production builds.
+ */
+
+import Editorial from '../../layouts/Editorial.astro';
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const frames = [
+  { time: '06:12', label: 'Morning', tone: 'first light, cool-warm gradient' },
+  { time: '13:40', label: 'Surf', tone: 'mid-day quiet, restrained motion' },
+  { time: '18:27', label: 'Walk', tone: 'late afternoon golden hour' },
+  { time: '21:05', label: 'Light', tone: 'blue hour, lights on' },
+];
+---
+
+<Editorial title="DEV — Day stub (Phase 1.5)" description="Token-generalization stub for the Day section.">
+  <section class="day-stub" data-pinned="true" aria-label="Day stub frame">
+    <div class="day-stub__track">
+      {
+        frames.map((frame, i) => (
+          <article class="day-stub__frame" data-frame-index={i + 1}>
+            <span class="label-mono day-stub__frame-time numeral">
+              {frame.time} / {frame.label.toUpperCase()}
+            </span>
+            <span class="label-mono-sm day-stub__frame-tone">{frame.tone}</span>
+          </article>
+        ))
+      }
+    </div>
+
+    <aside class="day-stub__meta">
+      <span class="label-mono numeral" id="day-stub-time">06:12 / MORNING</span>
+      <p class="display-ko-sm" lang="ko">
+        하루는 바다에서 시작되고, 해안에서 끝난다.
+      </p>
+    </aside>
+
+    <div class="day-stub__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
+    <footer class="day-stub__notes">
+      <span class="label-mono">Phase 1.5 token gate</span>
+      <p class="body-sm">
+        If a frame, time-label, or progress hairline below cannot be styled with the
+        existing tokens, add the missing token to <code>tokens.css</code> here — not
+        in a Unit 9 retrofit. Validate before opening Phase 2.
+      </p>
+    </footer>
+  </section>
+</Editorial>
+
+<style>
+  .day-stub {
+    position: relative;
+    min-height: 100svh;
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-ivory);
+  }
+
+  .day-stub__track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--track-gutter);
+    height: 100%;
+    padding: clamp(5rem, 12vh, 8rem) clamp(2rem, 6vw, 6rem)
+      clamp(4rem, 10vh, 6rem) clamp(2rem, 6vw, 6rem);
+    overflow-x: auto; /* scrollable in stub mode; Unit 9 replaces with ScrollTrigger pin */
+    scrollbar-width: none;
+  }
+  .day-stub__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .day-stub__frame {
+    flex: 0 0 min(78vw, 40rem);
+    background: var(--color-bone);
+    border: var(--hairline) solid var(--color-hair);
+    display: grid;
+    align-content: end;
+    gap: 0.5rem;
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  .day-stub__frame-time {
+    color: var(--color-ink);
+    opacity: 0.85;
+  }
+
+  .day-stub__frame-tone {
+    color: var(--color-ink);
+    opacity: 0.55;
+  }
+
+  .day-stub__meta {
+    position: absolute;
+    bottom: clamp(2.5rem, 7vh, 4.5rem);
+    left: clamp(2rem, 6vw, 6rem);
+    display: grid;
+    gap: 0.5rem;
+    max-width: min(28rem, 60vw);
+    color: var(--color-ink);
+    transition: opacity var(--duration-time-label) var(--ease-editorial);
+  }
+
+  .day-stub__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--progress-hairline-h);
+    background: linear-gradient(
+      to right,
+      var(--color-brass) 0%,
+      var(--color-brass) 35%,
+      var(--color-hair) 35%,
+      var(--color-hair) 100%
+    );
+  }
+
+  .day-stub__notes {
+    position: absolute;
+    top: clamp(5rem, 9vh, 6.5rem);
+    right: clamp(2rem, 6vw, 6rem);
+    max-width: min(22rem, 60vw);
+    display: grid;
+    gap: 0.5rem;
+    color: var(--color-ink);
+    opacity: 0.7;
+  }
+  .day-stub__notes code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background: var(--color-bone);
+    border: var(--hairline) solid var(--color-hair);
+    padding: 0.05em 0.35em;
+  }
+</style>
