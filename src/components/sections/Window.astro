@@ -1,10 +1,70 @@
 ---
+import { Picture } from 'astro:assets';
+
 import SectionWrapper from '../SectionWrapper.astro';
+import { getImage } from '../../lib/asset';
+import '../../styles/window.css';
+
+const main = getImage('WINDOW-01');
+const floatA = getImage('WINDOW-02');
+const floatB = getImage('WINDOW-03');
 ---
 
 <SectionWrapper id="window" index="04" title="THE WINDOW">
-  <span slot="display" class="display-lg">The View<br />Is Not an Amenity</span>
-  <span slot="display-ko" class="display-ko-md" lang="ko">
+  <span slot="display" class="display-lg" data-reveal="display">
+    The View<br />Is Not an Amenity
+  </span>
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
     그것은 이 주소의 본질이다.
   </span>
+
+  <div class="window__main">
+    <Picture
+      src={main.import}
+      alt={main.alt}
+      widths={[960, 1440, 1920]}
+      sizes={main.sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <figure class="window__float window__float--a">
+    <Picture
+      src={floatA.import}
+      alt=""
+      widths={[320, 480, 800]}
+      sizes={floatA.sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="lazy"
+      decoding="async"
+    />
+    <figcaption class="label-mono">Cup &middot; sill &middot; light</figcaption>
+  </figure>
+
+  <figure class="window__float window__float--b">
+    <Picture
+      src={floatB.import}
+      alt=""
+      widths={[320, 480, 800]}
+      sizes={floatB.sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="lazy"
+      decoding="async"
+    />
+    <figcaption class="label-mono">Late &middot; quiet &middot; haze</figcaption>
+  </figure>
 </SectionWrapper>
+
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { windowModule } from '../../lib/motion/window';
+
+  const el = document.getElementById('window');
+  if (el) register(windowModule, el as HTMLElement, currentMode());
+</script>

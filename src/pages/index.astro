@@ -23,7 +23,7 @@ import Address from '../components/sections/Address.astro';
   // Phase 1 baseline: until each section ships its real editorial layout
   // (Unit 6 → Coast; Phase 2 → Landmark/Day/Window/Space/Address), they all
   // render in stub mode (centered heading, no body content).
-  for (const id of ['window', 'space', 'address']) {
+  for (const id of ['space', 'address']) {
     document.getElementById(id)?.classList.add('is-stub');
   }
 </script>

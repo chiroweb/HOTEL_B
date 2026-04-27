@@ -23,6 +23,9 @@ import flowMorning from '../assets/placeholders/FLOW-MORNING.jpg';
 import flowSurf from '../assets/placeholders/FLOW-SURF.jpg';
 import flowWalk from '../assets/placeholders/FLOW-WALK.jpg';
 import flowLight from '../assets/placeholders/FLOW-LIGHT.jpg';
+import window01 from '../assets/placeholders/WINDOW-01.jpg';
+import window02 from '../assets/placeholders/WINDOW-02.jpg';
+import window03 from '../assets/placeholders/WINDOW-03.jpg';
 
 // ---------------------------------------------------------------------------
 // Slot identifiers — extended in Phase 2 (Units 8–12) as sections are built.
@@ -35,10 +38,12 @@ export type ImageSlotId =
   | 'FLOW-MORNING'
   | 'FLOW-SURF'
   | 'FLOW-WALK'
-  | 'FLOW-LIGHT';
+  | 'FLOW-LIGHT'
+  | 'WINDOW-01'
+  | 'WINDOW-02'
+  | 'WINDOW-03';
 // Reserved (added as sections graduate):
 //   'LANDMARK-03'
-// | 'WINDOW-01' | 'WINDOW-02' | 'WINDOW-03'
 // | 'SPACE-HERO' | `SPACE-${string}`
 // | 'EPILOGUE-01'
 
@@ -144,6 +149,30 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     sizes: '80vw',
     widths: [960, 1440, 1920],
     tone: '21:05 — blue hour. Deep navy with brass-light flecks. Lights on.',
+  },
+  'WINDOW-01': {
+    kind: 'image',
+    import: window01,
+    alt: 'Warm interior view framed by a window onto a distant coastal horizon (placeholder).',
+    sizes: '100vw',
+    widths: [960, 1440, 1920],
+    tone: 'Quiet interior with implied window frame; horizon line visible. View dominant, room incidental.',
+  },
+  'WINDOW-02': {
+    kind: 'image',
+    import: window02,
+    alt: '',
+    sizes: '(max-width: 768px) 60vw, 22vw',
+    widths: [320, 480, 800],
+    tone: 'Warm still-life detail (cup/sill/fabric/light). Floating editorial frame.',
+  },
+  'WINDOW-03': {
+    kind: 'image',
+    import: window03,
+    alt: '',
+    sizes: '(max-width: 768px) 60vw, 22vw',
+    widths: [320, 480, 800],
+    tone: 'Cooler atmospheric detail. Floating editorial frame, second.',
   },
 };
 
