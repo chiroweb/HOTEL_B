@@ -17,6 +17,7 @@
     "astro": "^5.2.0",
     "gsap": "^3.12.5",
     "lenis": "^1.1.13",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {

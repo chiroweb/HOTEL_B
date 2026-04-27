@@ -1,11 +1,48 @@
 ---
+import { Picture } from 'astro:assets';
+
 import SectionWrapper from '../SectionWrapper.astro';
+import PauseControl from '../PauseControl.astro';
+import { getImage } from '../../lib/asset';
+import '../../styles/prologue.css';
+
+const poster = getImage('PROLOGUE-01');
 ---
 
 <SectionWrapper id="coast" index="01" title="THE COAST">
-  <span slot="display" class="display-lg">The Coast<br />Before the Landmark</span>
-  <span slot="display-ko" class="display-ko-md" lang="ko">
+  <span slot="display" class="display-lg" data-reveal="display">
+    The Coast<br />Before the Landmark
+  </span>
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
     랜드마크보다 먼저, 해안선이 있다.
   </span>
+
+  <div class="coast__hero" data-hero-layer>
+    <Picture
+      src={poster.import}
+      alt={poster.alt}
+      widths={[480, 960, 1440, 1920]}
+      sizes={poster.sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="eager"
+      decoding="sync"
+      fetchpriority="high"
+      pictureAttributes={{ class: 'coast__poster' }}
+    />
+    <div data-video-mount aria-hidden="true"></div>
+  </div>
+
+  <div class="coast__pause">
+    <PauseControl controlsId="coast-hero-video" />
+  </div>
 </SectionWrapper>
 
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { prologueModule } from '../../lib/motion/prologue';
+
+  const el = document.getElementById('coast');
+  if (el) register(prologueModule, el as HTMLElement, currentMode());
+</script>

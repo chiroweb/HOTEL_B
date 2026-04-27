@@ -1,0 +1,53 @@
+---
+/**
+ * PauseControl — WCAG 2.2.2 Pause/Stop/Hide Level A.
+ *
+ * Always rendered (a hidden control fails keyboard parity). The motion
+ * module wires it to the hero <video>: aria-pressed and aria-label flip
+ * to mirror the actual paused state. Brass on hover (R4 strict scope).
+ */
+
+interface Props {
+  controlsId: string;
+  initialLabel?: string;
+}
+
+const { controlsId, initialLabel = 'Pause hero video' } = Astro.props;
+---
+
+<button
+  type="button"
+  class="pause-control"
+  data-pause-control
+  aria-controls={controlsId}
+  aria-label={initialLabel}
+  aria-pressed="false"
+>
+  <span class="label-mono" data-pause-label>PAUSE</span>
+</button>
+
+<style>
+  .pause-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 0;
+    color: var(--color-ivory);
+    cursor: pointer;
+    transition:
+      color 240ms var(--ease-editorial),
+      opacity 240ms var(--ease-editorial);
+    opacity: 0.85;
+  }
+  .pause-control:hover,
+  .pause-control:focus-visible {
+    color: var(--color-brass);
+    opacity: 1;
+  }
+  .pause-control:focus-visible {
+    outline: var(--hairline) solid var(--color-brass);
+    outline-offset: 4px;
+  }
+</style>
