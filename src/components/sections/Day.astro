@@ -92,8 +92,21 @@ const images = frames.map((f) => ({ frame: f, spec: getImage(f.slot) }));
 <script>
   import { register } from '../../lib/motion/registry';
   import { currentMode } from '../../lib/motion/breakpoint';
-  import { dayModule } from '../../lib/motion/day';
 
   const el = document.getElementById('day');
-  if (el) register(dayModule, el as HTMLElement, currentMode());
+  if (el) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          io.disconnect();
+          void import('../../lib/motion/day').then(({ dayModule }) => {
+            register(dayModule, el as HTMLElement, currentMode());
+          });
+        }
+      },
+      { rootMargin: '50%' }
+    );
+    io.observe(el);
+  }
 </script>

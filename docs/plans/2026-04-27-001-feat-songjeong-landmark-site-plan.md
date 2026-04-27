@@ -1,9 +1,10 @@
 ---
 title: Songjeong Landmark (WYNDHAM) Editorial Website
 type: feat
-status: active
+status: completed
 date: 2026-04-27
 deepened: 2026-04-27
+completed: 2026-04-27
 origin: docs/brainstorms/2026-04-27-songjeong-landmark-brief.md
 ---
 
@@ -251,7 +252,7 @@ bfcache lifecycle
 
 ### Phase 1 — Foundation + PROLOGUE (validates tonal system)
 
-- [ ] **Unit 1: Project bootstrap (Astro ^5.2 + Tailwind v4 + TS + dependencies)**
+- [x] **Unit 1: Project bootstrap (Astro ^5.2 + Tailwind v4 + TS + dependencies)**
 
 **Goal:** Working Astro ^5.2 project that builds and serves; Tailwind v4 wired via `@tailwindcss/vite`; TypeScript strict; GSAP 3 + ScrollTrigger + Lenis 1.x installed via modular imports.
 
@@ -287,7 +288,7 @@ bfcache lifecycle
 
 ---
 
-- [ ] **Unit 2: Design tokens + typography ramp + split-loading recipe**
+- [x] **Unit 2: Design tokens + typography ramp + split-loading recipe**
 
 **Goal:** Complete design system tokens declared in `@theme`. Typography ramp renders correctly using `unicode-range` split-loading: Latin display only ships Latin glyphs; Pretendard subset KR ships Korean glyphs. Brass strictly available only as `--color-brass`.
 
@@ -335,7 +336,7 @@ bfcache lifecycle
 
 ---
 
-- [ ] **Unit 3: Asset manifest (typed for Astro `<Image>`) + placeholder pipeline**
+- [x] **Unit 3: Asset manifest (typed for Astro `<Image>`) + placeholder pipeline**
 
 **Goal:** Living `docs/assets-needed.md` table is the single source for all media slots. Code resolves all media via SLOT-IDs through `src/data/asset-manifest.ts` with **typed split**: `getImage(slotId)` returns Astro `ImageMetadata` (lets `<Image>` emit AVIF/srcset variants automatically); `getVideo(slotId)` returns the `<source>` ladder + poster. Placeholder files cover all Phase 1 slots; Phase 2 slots listed as `(pending)`.
 
@@ -394,7 +395,7 @@ bfcache lifecycle
 
 ---
 
-- [ ] **Unit 4: Layout shell + scroll engine (canonical Lenis × GSAP recipe) + lifecycle gates**
+- [x] **Unit 4: Layout shell + scroll engine (canonical Lenis × GSAP recipe) + lifecycle gates**
 
 **Goal:** `Editorial.astro` layout with hairline sticky nav. Engine runs the canonical Lenis × GSAP integration (GSAP ticker drives Lenis, Lenis emits scroll → ScrollTrigger.update). Registry uses `gsap.context()` for atomic teardown. All four lifecycle gates respected: prefers-reduced-motion, breakpoint, bfcache (pageshow/pagehide), Vite HMR. `lenis/snap` plugin provides magnetic snap with `proximity` mode. Active-nav state driven by Lenis scroll progress against pre-declared section ranges (survives long pins).
 
@@ -501,7 +502,7 @@ if (import.meta.hot) {
 
 ---
 
-- [ ] **Unit 5: Section wrapper (semantic + a11y discipline at scaffold) + snap baseline**
+- [x] **Unit 5: Section wrapper (semantic + a11y discipline at scaffold) + snap baseline**
 
 **Goal:** Reusable `<SectionWrapper>` component that enforces semantic HTML and ARIA at scaffold time (not deferred to polish). Renders `<section aria-labelledby="...">` with a slotted `<h2>`, asymmetric mono index label (`aria-hidden`), correct snap behavior including pinned-section opt-out. Six section stubs render in correct order.
 
@@ -553,7 +554,7 @@ if (import.meta.hot) {
 
 ---
 
-- [ ] **Unit 6: Section 1 PROLOGUE — discovery reveal + LCP-first hero (vertical slice)**
+- [x] **Unit 6: Section 1 PROLOGUE — discovery reveal + LCP-first hero (vertical slice)**
 
 **Goal:** Production-quality PROLOGUE section. Hero **poster image** is the LCP element (rendered from first paint as `<img fetchpriority="high">`). Video element mounts only after `window.load` event, with AV1+H.264 source ladder. WCAG 2.2.2 pause/play control present. Asymmetric editorial copy reveal; horizon shifts subtly on scroll; transition into Landmark feels like discovery, not a slide.
 
@@ -619,7 +620,7 @@ Positioned bottom-right small, brass on hover. Toggles `video.paused` and update
 
 ---
 
-- [ ] **Unit 7: Phase 1 polish — perf budget validation, a11y, reduced-motion audit, Phase 1.5 token-generalization gate**
+- [x] **Unit 7: Phase 1 polish — perf budget validation, a11y, reduced-motion audit, Phase 1.5 token-generalization gate**
 
 **Goal:** PROLOGUE meets the explicit Performance Budget (see Risks section) on Lighthouse mobile Slow 4G profile. Reduced-motion path is fully validated. **Phase 1.5 stub Day frame** validates that PROLOGUE-derived tokens generalize to non-PROLOGUE motion grammar before Phase 2 commits.
 
@@ -681,7 +682,7 @@ The stub is destroyed before Phase 2 begins. Its only purpose is forcing token d
 
 ### Phase 2 — Sections 2–6 + mobile + final polish
 
-- [ ] **Unit 8: Section 2 LANDMARK — vertical rise + single horizontal decomposition event**
+- [x] **Unit 8: Section 2 LANDMARK — vertical rise + single horizontal decomposition event**
 
 **Goal:** Building section that establishes "looking up" then "scanning across" as two distinct architectural gestures. Vertical pin scroll moves the camera up the facade; one further scroll triggers a horizontal split where silhouette moves left and a facade detail enters from right.
 
@@ -717,7 +718,7 @@ The stub is destroyed before Phase 2 begins. Its only purpose is forcing token d
 
 ---
 
-- [ ] **Unit 9: Section 3 SONGJEONG DAY — pinned horizontal time film**
+- [x] **Unit 9: Section 3 SONGJEONG DAY — pinned horizontal time film**
 
 **Goal:** The site's main "wow" moment. Pinned section translates a four-frame image track horizontally as the user scrolls vertically. Time labels (06:12 / 13:40 / 18:27 / 21:05) update in left-anchored copy. Bottom hairline shows progress. Looks nothing like a carousel.
 
@@ -800,7 +801,7 @@ const ctx = gsap.context(() => {
 
 ---
 
-- [ ] **Unit 10: Section 4 WINDOW — still main + floating overlay drift**
+- [x] **Unit 10: Section 4 WINDOW — still main + floating overlay drift**
 
 **Goal:** Quietest section. Main interior view holds nearly still while 1–2 floating editorial frames drift subtly and shift opacity, as if the layout is being re-edited.
 
@@ -835,7 +836,7 @@ const ctx = gsap.context(() => {
 
 ---
 
-- [ ] **Unit 11: Section 5 SPACE — three-state crossing transformation**
+- [x] **Unit 11: Section 5 SPACE — three-state crossing transformation**
 
 **Goal:** Information section that escapes the card-grid trap. Three states: sense (image right, evocative copy left) → structure (image crosses left and dominates, sub-categories appear right) → information (image recedes, thin lines/numbers/plan render).
 
@@ -901,7 +902,7 @@ tl.addLabel('s1')
 
 ---
 
-- [ ] **Unit 12: Section 6 EPILOGUE / ADDRESS — poster stop**
+- [x] **Unit 12: Section 6 EPILOGUE / ADDRESS — poster stop**
 
 **Goal:** Final imprint. Quiet poster screen. Display type fades in. No scroll motion within the section. CONTACT link as small text.
 
@@ -932,7 +933,7 @@ tl.addLabel('s1')
 
 ---
 
-- [ ] **Unit 13: Mobile adaptations + cross-section breakpoint integrity**
+- [x] **Unit 13: Mobile adaptations + cross-section breakpoint integrity**
 
 **Goal:** All five horizontal/pinned sections cleanly fall back to vertical/stacked patterns on ≤768px. Breakpoint crossing during a session re-initializes motion correctly. Mobile feels premium, not simplified.
 
@@ -973,7 +974,7 @@ tl.addLabel('s1')
 
 ---
 
-- [ ] **Unit 14: Final polish + Lighthouse pass + deploy preview**
+- [x] **Unit 14: Final polish + Lighthouse pass + deploy preview**
 
 **Goal:** Whole-site Performance Budget met (see Risks section). Lighthouse mobile Slow 4G + 4× CPU slowdown: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90. Open Graph + Twitter card metadata. Favicon. First static deploy preview.
 

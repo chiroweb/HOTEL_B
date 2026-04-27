@@ -63,8 +63,21 @@ const floatB = getImage('WINDOW-03');
 <script>
   import { register } from '../../lib/motion/registry';
   import { currentMode } from '../../lib/motion/breakpoint';
-  import { windowModule } from '../../lib/motion/window';
 
   const el = document.getElementById('window');
-  if (el) register(windowModule, el as HTMLElement, currentMode());
+  if (el) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          io.disconnect();
+          void import('../../lib/motion/window').then(({ windowModule }) => {
+            register(windowModule, el as HTMLElement, currentMode());
+          });
+        }
+      },
+      { rootMargin: '50%' }
+    );
+    io.observe(el);
+  }
 </script>

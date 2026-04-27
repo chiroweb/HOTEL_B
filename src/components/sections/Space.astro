@@ -67,8 +67,21 @@ const hero = getImage('SPACE-HERO');
 <script>
   import { register } from '../../lib/motion/registry';
   import { currentMode } from '../../lib/motion/breakpoint';
-  import { spaceModule } from '../../lib/motion/space';
 
   const el = document.getElementById('space');
-  if (el) register(spaceModule, el as HTMLElement, currentMode());
+  if (el) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          io.disconnect();
+          void import('../../lib/motion/space').then(({ spaceModule }) => {
+            register(spaceModule, el as HTMLElement, currentMode());
+          });
+        }
+      },
+      { rootMargin: '50%' }
+    );
+    io.observe(el);
+  }
 </script>
