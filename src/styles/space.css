@@ -178,24 +178,9 @@
   z-index: 5;
 }
 
-@media (max-width: 768px) {
-  .space__copy {
-    top: 8svh;
-    transform: none;
-    max-width: none;
-    right: clamp(2rem, 6vw, 4rem);
-  }
-  .space__image {
-    top: auto;
-    bottom: 12svh;
-    right: 50%;
-    transform: translateX(50%);
-    width: 70vw;
-  }
-}
-
-/* Reduced-motion: stack the three states vertically as separate blocks */
-@media (prefers-reduced-motion: reduce) {
+/* Mobile + reduced-motion: stack the three states vertically as
+   separate blocks. No pin, no crossing transformation. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
   #space {
     height: auto;
     min-height: auto;
@@ -214,12 +199,17 @@
     width: 100%;
     max-width: none;
     margin-bottom: 2rem;
+    pointer-events: auto;
   }
   .space__image {
     aspect-ratio: 4 / 3;
     width: 100%;
   }
+  .space__info {
+    place-items: start;
+  }
   .space__info-grid {
     width: 100%;
+    grid-template-columns: 1fr;
   }
 }

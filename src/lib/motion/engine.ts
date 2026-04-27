@@ -109,7 +109,26 @@ export function boot(): void {
   if (typeof window !== 'undefined') {
     window.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true });
   }
+
+  // iOS Safari snap-cache flush — after every refresh, dispatch a no-op
+  // style mutation on <html> so iOS rebuilds its stale snap-point cache
+  // (WebKit Bug 245722). No-op on non-iOS.
+  if (typeof navigator !== 'undefined' && IS_IOS) {
+    ScrollTrigger.addEventListener('refresh', () => {
+      const html = document.documentElement;
+      const prev = html.style.scrollSnapType;
+      html.style.scrollSnapType = 'none';
+      requestAnimationFrame(() => {
+        html.style.scrollSnapType = prev || '';
+      });
+    });
+  }
 }
+
+const IS_IOS =
+  typeof navigator !== 'undefined' &&
+  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1));
 
 export function start(): void {
   startEngine();

@@ -24,19 +24,32 @@ import type { MotionModule } from './types';
 
 export const dayModule: MotionModule = {
   id: 'day',
-  init(el, _mode) {
+  init(el, mode) {
     return gsap.context(() => {
       const reduce = shouldReduce();
 
       const track = el.querySelector<HTMLElement>('.day-track');
       const labels = Array.from(el.querySelectorAll<HTMLElement>('.day-time-stack > .label-mono'));
       const progressFill = el.querySelector<HTMLElement>('.day-progress__fill');
+      const frames = Array.from(el.querySelectorAll<HTMLElement>('.day-frame'));
 
-      if (reduce) {
-        // Stacked vertical layout via @media-reduced CSS. Show all time
-        // labels alongside their respective frames.
+      if (reduce || mode === 'mobile') {
+        // Stacked vertical layout via @media-reduced/(max-width:768px) CSS.
+        // Each frame fades in on scroll; meta-block time labels all visible.
         for (const label of labels) {
           label.dataset.reducedShow = 'true';
+          label.dataset.active = 'false';
+        }
+        if (mode === 'mobile' && !reduce) {
+          for (const frame of frames) {
+            gsap.from(frame, {
+              y: 28,
+              opacity: 0,
+              duration: 0.86,
+              ease: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              scrollTrigger: { trigger: frame, start: 'top 85%', once: true },
+            });
+          }
         }
         return;
       }

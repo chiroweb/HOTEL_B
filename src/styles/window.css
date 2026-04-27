@@ -108,19 +108,43 @@
 }
 
 @media (max-width: 768px) {
+  /* Stack the floats below the main image instead of overlapping —
+     "main image static; floating frames stack and reveal sequentially". */
+  #window {
+    height: auto;
+    min-height: 100svh;
+  }
+  .window__main {
+    position: relative;
+    height: 60svh;
+    inset: auto;
+  }
   .window__copy {
-    top: auto;
-    bottom: clamp(8rem, 22vh, 12rem);
+    position: static;
+    padding: 2rem clamp(1rem, 5vw, 2rem);
+    max-width: none;
+    color: var(--color-ink);
+    text-shadow: none;
+    background: var(--color-ivory);
   }
-  .window__float--a {
-    top: clamp(5rem, 10vh, 7rem);
-    right: clamp(1rem, 4vw, 2rem);
-    width: 38vw;
+  .window__copy .display-lg,
+  .window__copy .display-ko-md {
+    color: var(--color-ink);
   }
-  .window__float--b {
-    bottom: clamp(1.5rem, 5vh, 3rem);
-    right: clamp(1rem, 4vw, 2rem);
-    width: 32vw;
+  #window .section__index {
+    color: var(--color-ink);
+    opacity: 0.55;
+  }
+  .window__float {
+    position: relative;
+    inset: auto !important;
+    width: 100% !important;
+    padding: 0 clamp(1rem, 5vw, 2rem);
+    margin-top: 1.5rem;
+  }
+  .window__float .label-mono {
+    color: var(--color-ink);
+    text-shadow: none;
   }
 }
 

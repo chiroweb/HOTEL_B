@@ -19,7 +19,7 @@ const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 export const landmarkModule: MotionModule = {
   id: 'landmark',
-  init(el, _mode) {
+  init(el, mode) {
     return gsap.context(() => {
       const reduce = shouldReduce();
 
@@ -43,6 +43,27 @@ export const landmarkModule: MotionModule = {
       if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
 
       if (reduce) return; // static stacked layout via @media-reduced CSS
+
+      // ---- Mobile: skip pin; tower + detail render stacked via CSS, fade in.
+      if (mode === 'mobile') {
+        if (detail) gsap.set(detail, { opacity: 1 });
+        if (tower) gsap.from(tower, {
+          y: 28, opacity: 0, duration: 0.86,
+          ease: EASE,
+          scrollTrigger: { trigger: tower, start: 'top 85%', once: true },
+        });
+        if (detail) gsap.from(detail, {
+          y: 28, opacity: 0, duration: 0.86,
+          ease: EASE,
+          scrollTrigger: { trigger: detail, start: 'top 85%', once: true },
+        });
+        if (caption) gsap.from(caption, {
+          y: 16, opacity: 0, duration: 0.7,
+          ease: EASE,
+          scrollTrigger: { trigger: caption, start: 'top 90%', once: true },
+        });
+        return;
+      }
 
       // ---- Pinned scrub: Stage 1 + Stage 2 ----
       const pin = gsap.timeline({

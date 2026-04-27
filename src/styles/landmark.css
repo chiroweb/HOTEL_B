@@ -108,14 +108,18 @@
   z-index: 3;
 }
 
-/* Reduced-motion fallback: collapse both stages into a vertical stacked
-   layout (tower above, facade below). No scrub, no transform. */
-@media (prefers-reduced-motion: reduce) {
+/* Mobile + reduced-motion: collapse both stages into a vertical stacked
+   layout (tower above, facade below). No scrub, no horizontal motion. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  #landmark {
+    height: auto;
+    min-height: auto;
+  }
   .landmark__stage {
     position: relative;
     grid-template-columns: 1fr;
-    grid-template-rows: 60vh 40vh;
-    height: 100svh;
+    grid-template-rows: 65svh 45svh;
+    height: auto;
   }
   .landmark__tower,
   .landmark__detail {
@@ -124,10 +128,15 @@
   .landmark__detail {
     opacity: 1;
   }
+  .landmark__copy {
+    position: static;
+    padding: 2rem clamp(1.5rem, 5vw, 4rem);
+    max-width: none;
+  }
   .landmark__caption {
     opacity: 1;
     position: static;
-    margin: 1rem clamp(1.5rem, 5vw, 4rem);
+    margin: 0.75rem clamp(1.5rem, 5vw, 4rem) 2rem;
     text-align: left;
     max-width: none;
   }

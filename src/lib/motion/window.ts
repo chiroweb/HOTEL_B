@@ -21,7 +21,7 @@ const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 export const windowModule: MotionModule = {
   id: 'window',
-  init(el, _mode) {
+  init(el, mode) {
     return gsap.context(() => {
       const reduce = shouldReduce();
 
@@ -43,6 +43,21 @@ export const windowModule: MotionModule = {
       if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
 
       if (reduce) return;
+
+      // Mobile: skip pin; floating frames stack and reveal sequentially.
+      if (mode === 'mobile') {
+        for (const f of [floatA, floatB]) {
+          if (!f) continue;
+          gsap.from(f, {
+            y: 24,
+            opacity: 0,
+            duration: 0.86,
+            ease: EASE,
+            scrollTrigger: { trigger: f, start: 'top 88%', once: true },
+          });
+        }
+        return;
+      }
 
       gsap.to(el, {
         scrollTrigger: {

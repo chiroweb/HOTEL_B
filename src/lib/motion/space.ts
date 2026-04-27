@@ -22,7 +22,7 @@ const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 export const spaceModule: MotionModule = {
   id: 'space',
-  init(el, _mode) {
+  init(el, mode) {
     return gsap.context(() => {
       const reduce = shouldReduce();
 
@@ -44,9 +44,25 @@ export const spaceModule: MotionModule = {
       if (display) enter.from(display, { y: reduce ? 0 : 24, opacity: 0, duration: 0.86 }, 0.08);
       if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
 
-      if (reduce) {
-        // Reduced-motion: render all three layers stacked vertically; ensure
-        // sub-cats and info are visible (CSS sets opacity:1 under media-reduced).
+      if (reduce || mode === 'mobile') {
+        // Render all three states stacked vertically (CSS handles layout via
+        // (max-width:768px) and prefers-reduced-motion media). Ensure cats
+        // and info are visible — under desktop pin they start at opacity 0.
+        if (cats) gsap.set(cats, { opacity: 1, x: 0 });
+        if (info) gsap.set(info, { opacity: 1 });
+        if (mode === 'mobile' && !reduce) {
+          // Stagger fade-in for each block.
+          for (const block of [image, cats, info]) {
+            if (!block) continue;
+            gsap.from(block, {
+              y: 24,
+              opacity: 0,
+              duration: 0.86,
+              ease: EASE,
+              scrollTrigger: { trigger: block, start: 'top 85%', once: true },
+            });
+          }
+        }
         return;
       }
 

@@ -126,8 +126,9 @@
   z-index: 4;
 }
 
-/* Reduced-motion: stack frames vertically with their captions. No pin. */
-@media (prefers-reduced-motion: reduce) {
+/* Mobile + reduced-motion: stack frames vertically with their captions.
+   No pin, no horizontal pan on touch. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
   #day {
     height: auto;
     min-height: auto;
