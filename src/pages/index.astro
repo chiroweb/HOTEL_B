@@ -1,24 +1,29 @@
 ---
+import '../styles/sections.css';
+
 import Editorial from '../layouts/Editorial.astro';
+import Coast from '../components/sections/Coast.astro';
+import Landmark from '../components/sections/Landmark.astro';
+import Day from '../components/sections/Day.astro';
+import Window from '../components/sections/Window.astro';
+import Space from '../components/sections/Space.astro';
+import Address from '../components/sections/Address.astro';
 ---
 
 <Editorial>
-  <section id="coast" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 01 / THE COAST )</p>
-  </section>
-  <section id="landmark" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 02 / VERTICAL )</p>
-  </section>
-  <section id="day" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 03 / FLOW )</p>
-  </section>
-  <section id="window" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 04 / THE WINDOW )</p>
-  </section>
-  <section id="space" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 05 / THE SPACE )</p>
-  </section>
-  <section id="address" style="min-height: 100svh; display: grid; place-items: center;">
-    <p class="label-mono">( 06 / ADDRESS )</p>
-  </section>
+  <Coast />
+  <Landmark />
+  <Day />
+  <Window />
+  <Space />
+  <Address />
 </Editorial>
+
+<script>
+  // Phase 1 baseline: until each section ships its real editorial layout
+  // (Unit 6 → Coast; Phase 2 → Landmark/Day/Window/Space/Address), they all
+  // render in stub mode (centered heading, no body content).
+  for (const id of ['coast', 'landmark', 'day', 'window', 'space', 'address']) {
+    document.getElementById(id)?.classList.add('is-stub');
+  }
+</script>

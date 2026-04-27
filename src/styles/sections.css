@@ -1,0 +1,103 @@
+/* ============================================================================
+ * Section base + per-section asymmetric mono-index placement.
+ *
+ * Snap: lenis/snap targets non-pinned sections via JS (engine.ts).
+ * Native CSS scroll-snap-align here only matters under
+ * html[data-snap-fallback='on'] (reduced-motion fallback). Pinned sections
+ * opt out via data-pinned='true' selectors so ScrollTrigger pin math wins.
+ * ========================================================================== */
+
+.section {
+  position: relative;
+  display: grid;
+  height: 100svh;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden; /* prevents horizontal-track sections from leaking sideways */
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  scroll-snap-align: start;
+}
+
+.section.is-pinned {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+}
+
+.section__index {
+  position: absolute;
+  z-index: 2;
+  color: var(--color-ink);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.section__heading {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.section__body {
+  display: contents; /* sections override layout per their own CSS */
+}
+
+/* ----------------------------------------------------------------------------
+ * Asymmetric mono-index placement per brief examples.
+ * Adjusted in section-specific CSS (Unit 6+); these are scaffold defaults.
+ * -------------------------------------------------------------------------- */
+
+[data-section='coast'] .section__index {
+  top: clamp(5rem, 8vh, 6rem);
+  left: clamp(1rem, 4vw, 2.5rem);
+}
+[data-section='landmark'] .section__index {
+  top: clamp(5rem, 8vh, 6rem);
+  right: clamp(1rem, 4vw, 2.5rem);
+  text-align: right;
+}
+[data-section='day'] .section__index {
+  bottom: clamp(2rem, 5vh, 3rem);
+  left: clamp(1rem, 4vw, 2.5rem);
+}
+[data-section='window'] .section__index {
+  top: clamp(5rem, 14vh, 8rem);
+  right: clamp(1rem, 4vw, 2.5rem);
+  text-align: right;
+}
+[data-section='space'] .section__index {
+  top: clamp(5rem, 8vh, 6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+[data-section='address'] .section__index {
+  bottom: clamp(2rem, 5vh, 3rem);
+  right: clamp(1rem, 4vw, 2.5rem);
+  text-align: right;
+}
+
+/* ----------------------------------------------------------------------------
+ * Stub headings (Unit 5 — replaced by section-specific real content in Units
+ * 6, 8–12). Centered placeholder so reviewers can feel the six-act rhythm
+ * by scrolling top-to-bottom on the scaffold.
+ * -------------------------------------------------------------------------- */
+
+.section.is-stub .section__heading {
+  align-self: center;
+  justify-self: center;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  text-align: center;
+  max-width: 32rem;
+}
+
+.section.is-stub .section__body {
+  display: none;
+}
+
+.display-ko {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--color-ink);
+  opacity: 0.7;
+}

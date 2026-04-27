@@ -1,0 +1,61 @@
+---
+/**
+ * SectionWrapper — semantic+a11y discipline at scaffold time.
+ *
+ * Renders a <section aria-labelledby> with:
+ *   • Mono index label ( NN / TITLE ) — decorative, aria-hidden, positioned
+ *     asymmetrically per section via [data-section] selectors in sections.css.
+ *   • <h2 id="${id}-h"> with `display` and optional `display-ko` slots.
+ *   • Default slot for the section's body content.
+ *
+ * Snap behavior:
+ *   • pinned=false (Coast, Landmark, Window, Address): adds
+ *     scroll-snap-align:start so native CSS-snap fallback (engaged under
+ *     reduced-motion) lands cleanly. lenis/snap (Unit 4) targets these
+ *     same elements by id.
+ *   • pinned=true  (Day, Space): scroll-snap-align:none + scroll-snap-stop:
+ *     normal so the section can never fight ScrollTrigger pin math.
+ *
+ * Sizing: paired height + min-height: 100svh prevents pin-spacers from
+ * growing past the snap container under iOS dynamic chrome (Unit 4 R7).
+ */
+
+interface Props {
+  /** Stable element id used by Nav, snap, ScrollTrigger, and a11y. */
+  id: string;
+  /** Two-digit index ("01"–"06"). */
+  index: string;
+  /** Visible English title in the mono index label. */
+  title: string;
+  /** Whether ScrollTrigger pins this section. Day & Space = true. */
+  pinned?: boolean;
+  /** Visually-hidden heading used by screen readers when there is no display slot. */
+  headingFallback?: string;
+}
+
+const { id, index, title, pinned = false, headingFallback } = Astro.props;
+const headingId = `${id}-h`;
+---
+
+<section
+  id={id}
+  class:list={['section', pinned && 'is-pinned']}
+  data-section={id}
+  data-pinned={pinned ? 'true' : 'false'}
+  aria-labelledby={headingId}
+>
+  <span class="section__index label-mono" aria-hidden="true">
+    ( {index} / {title} )
+  </span>
+
+  <h2 id={headingId} class="section__heading">
+    <slot name="display">
+      {headingFallback ? <span class="visually-hidden">{headingFallback}</span> : null}
+    </slot>
+    <slot name="display-ko" />
+  </h2>
+
+  <div class="section__body">
+    <slot />
+  </div>
+</section>
