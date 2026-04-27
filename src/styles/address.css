@@ -1,0 +1,121 @@
+/* ============================================================================
+ * ADDRESS — final imprint. No scroll motion within the section. Display
+ * type fades in once, then nothing. Closing the browser tab on Address
+ * should feel right; the site doesn't beg the user to act.
+ * ========================================================================== */
+
+#address {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  position: relative;
+  overflow: hidden;
+}
+
+#address.is-stub {
+  display: grid;
+}
+
+#address.is-stub .section__heading {
+  align-self: center;
+  justify-self: center;
+  padding: 0 clamp(2rem, 6vw, 6rem);
+  text-align: center;
+  max-width: 32rem;
+}
+
+.address__layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(4rem, 12vh, 8rem) clamp(1.5rem, 6vw, 4rem);
+}
+
+.address__poster {
+  display: grid;
+  gap: clamp(1.5rem, 4vh, 2.5rem);
+  text-align: center;
+  max-width: min(48rem, 92vw);
+}
+
+.address__display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 7.5vw, 6rem);
+  line-height: 1.0;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.address__display span {
+  display: block;
+  opacity: 0; /* reveal manages stagger */
+}
+
+.address__display span:not(:first-child) {
+  margin-top: clamp(0.25rem, 0.5vh, 0.5rem);
+}
+
+.address__metadata {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  color: var(--color-ink);
+  opacity: 0; /* faded in last */
+}
+
+.address__metadata-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.4vw, 1.125rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.address__metadata-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.address__hairline {
+  width: clamp(2.5rem, 5vw, 4rem);
+  height: var(--hairline);
+  background: var(--color-brass);
+  margin: 0.25rem 0;
+  opacity: 0;
+}
+
+.address__contact {
+  position: absolute;
+  z-index: 4;
+  right: clamp(1.5rem, 5vw, 4rem);
+  bottom: clamp(1.5rem, 5vh, 3rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  transition:
+    opacity 240ms var(--ease-editorial),
+    color 240ms var(--ease-editorial);
+}
+
+.address__contact:hover,
+.address__contact:focus-visible {
+  opacity: 1;
+  color: var(--color-brass);
+}
+
+#address .section__index {
+  z-index: 3;
+}

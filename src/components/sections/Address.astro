@@ -1,12 +1,40 @@
 ---
 import SectionWrapper from '../SectionWrapper.astro';
+import '../../styles/address.css';
 ---
 
 <SectionWrapper id="address" index="06" title="ADDRESS">
-  <span slot="display" class="display-lg">
-    Songjeong<br />Will Remember<br />This Address
+  <span slot="display" class="visually-hidden" data-reveal="display">
+    Songjeong will remember this address.
   </span>
-  <span slot="display-ko" class="display-ko-md" lang="ko">
-    WYNDHAM &middot; BUSAN &middot; COASTAL LANDMARK
-  </span>
+
+  <div class="address__layout">
+    <div class="address__poster">
+      <h3 class="address__display">
+        <span>Songjeong</span>
+        <span>Will Remember</span>
+        <span>This Address</span>
+      </h3>
+
+      <div class="address__hairline" aria-hidden="true"></div>
+
+      <div class="address__metadata">
+        <span class="address__metadata-mark">WYNDHAM</span>
+        <span class="address__metadata-meta">Busan &middot; Coastal Landmark</span>
+      </div>
+    </div>
+  </div>
+
+  <a class="address__contact" href="mailto:contact@example.com" aria-label="Open email to contact the hotel">
+    Contact &rarr;
+  </a>
 </SectionWrapper>
+
+<script>
+  import { register } from '../../lib/motion/registry';
+  import { currentMode } from '../../lib/motion/breakpoint';
+  import { addressModule } from '../../lib/motion/address';
+
+  const el = document.getElementById('address');
+  if (el) register(addressModule, el as HTMLElement, currentMode());
+</script>
