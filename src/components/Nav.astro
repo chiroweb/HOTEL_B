@@ -1,0 +1,55 @@
+---
+import '../styles/nav.css';
+
+interface NavSection {
+  readonly id: string;
+  readonly label: string;
+}
+
+const sections: readonly NavSection[] = [
+  { id: 'coast', label: 'Coast' },
+  { id: 'landmark', label: 'Landmark' },
+  { id: 'day', label: 'Day' },
+  { id: 'window', label: 'Window' },
+  { id: 'space', label: 'Space' },
+  { id: 'address', label: 'Address' },
+];
+---
+
+<a class="skip-link label-mono" href="#main">Skip to content</a>
+
+<nav class="nav" aria-label="Primary">
+  <a class="nav__brand" href="#coast">
+    <span class="nav__brand-mark">WYNDHAM</span>
+    <span class="nav__brand-meta label-mono-sm" aria-hidden="true">
+      BUSAN / COASTAL LANDMARK
+    </span>
+  </a>
+
+  <ul class="nav__sections" id="nav-sections">
+    {
+      sections.map((section, i) => (
+        <li>
+          <a
+            class="nav__link label-mono"
+            href={`#${section.id}`}
+            data-section={section.id}
+            data-active={i === 0 ? 'true' : 'false'}
+          >
+            <span class="numeral">{String(i + 1).padStart(2, '0')}</span>
+            <span aria-hidden="true">&nbsp;/&nbsp;</span>
+            {section.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <a
+    class="nav__contact label-mono"
+    href="mailto:contact@example.com"
+    aria-label="Open email to contact the hotel"
+  >
+    Contact &rarr;
+  </a>
+</nav>

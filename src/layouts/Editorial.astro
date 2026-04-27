@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+
+import Nav from '../components/Nav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set true on hero pages so PROLOGUE-01 poster is preloaded for LCP. */
+  preloadHeroPoster?: boolean;
+}
+
+const {
+  title = 'WYNDHAM — Songjeong Coastal Landmark',
+  description = 'Songjeong Landmark (WYNDHAM): a coastal editorial site for Busan.',
+  preloadHeroPoster = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    {
+      /* Critical-path Latin display weight is preloaded; Pretendard subset KR
+         loads via swap (Korean copy is below the fold of first paint). */
+    }
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/inter-tight-latin-regular.woff2"
+      crossorigin="anonymous"
+    />
+
+    {
+      preloadHeroPoster && (
+        <link
+          rel="preload"
+          as="image"
+          href="/_astro/PROLOGUE-01-poster.avif"
+          fetchpriority="high"
+          type="image/avif"
+        />
+      )
+    }
+  </head>
+  <body>
+    <h1 class="visually-hidden">WYNDHAM &mdash; Songjeong Coastal Landmark</h1>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+
+    <script>
+      import { boot } from '../lib/motion/engine';
+      boot();
+    </script>
+  </body>
+</html>

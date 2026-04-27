@@ -1,0 +1,136 @@
+/* ============================================================================
+ * Nav — sticky editorial bar, hairline-bottom, brass accent strictly scoped
+ * to the active-link 1px underline.
+ * ========================================================================== */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 3rem);
+  padding: 0.875rem clamp(1rem, 4vw, 2.5rem);
+  background: color-mix(in srgb, var(--color-ivory) 92%, transparent);
+  backdrop-filter: saturate(140%) blur(6px);
+  -webkit-backdrop-filter: saturate(140%) blur(6px);
+  border-bottom: var(--hairline) solid var(--color-hair);
+}
+
+.nav__brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  text-decoration: none;
+  color: var(--color-ink);
+}
+
+.nav__brand-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.nav__brand-meta {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .nav__brand-meta {
+    display: inline;
+    color: var(--color-ink);
+    opacity: 0.55;
+  }
+}
+
+.nav__sections {
+  display: none;
+  justify-self: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+
+@media (min-width: 769px) {
+  .nav__sections {
+    display: flex;
+  }
+}
+
+.nav__link {
+  position: relative;
+  display: inline-block;
+  padding: 0.25rem 0;
+  text-decoration: none;
+  color: var(--color-ink);
+  opacity: 0.55;
+  transition: opacity 200ms var(--ease-editorial);
+}
+
+.nav__link:hover,
+.nav__link:focus-visible {
+  opacity: 1;
+}
+
+.nav__link[data-active='true'] {
+  opacity: 1;
+}
+
+.nav__link[data-active='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: var(--hairline);
+  background: var(--color-brass);
+}
+
+.nav__contact {
+  justify-self: end;
+  text-decoration: none;
+  color: var(--color-ink);
+  opacity: 0.7;
+  transition:
+    opacity 200ms var(--ease-editorial),
+    color 200ms var(--ease-editorial);
+}
+
+.nav__contact:hover,
+.nav__contact:focus-visible {
+  opacity: 1;
+  color: var(--color-brass);
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  inset-block-start: 1rem;
+  transform: translateY(-150%);
+  padding: 0.5rem 0.875rem;
+  background: var(--color-ink);
+  color: var(--color-ivory);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 100;
+  transition: transform 200ms var(--ease-editorial);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Reduced-motion fallback: native CSS scroll-snap on <html data-snap-fallback="on">.
+   Lenis is destroyed in this mode (Lenis README forbids combining). */
+html[data-snap-fallback='on'] {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 4rem;
+}
