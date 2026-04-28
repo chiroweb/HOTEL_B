@@ -1,15 +1,17 @@
 /**
- * SPACE motion module — three-state crossing.
+ * SPACE motion module — two-state crossing.
  *
- * Single timeline, two transitions, scrubbed by ScrollTrigger:
+ * Single timeline, one transition, scrubbed by ScrollTrigger:
  *   s1 (sense)        image on right, evocative copy left
  *   s2 (structure)    image crosses left + dominates; sub-cats appear right
- *   s3 (information)  image recedes (opacity 0.4); info layer renders
  *
- * Decision: snap.snapTo: 'labels' (magnetic state landing). The brief
- * frames the metamorphosis as discrete settling positions ("sense →
- * structure → information"), so labels feel correct here. Switch to
- * continuous scrub if visual review prefers stop-frame edit feel.
+ * The previous "s3 (information)" state — image receding to opacity 0.4 and
+ * an info layer rendering on top — was rolled back at the user's request.
+ * Now the image stays present; category swap happens via hover (handled in
+ * Space.astro), not as a third pinned state.
+ *
+ * Snap labels: s1 / s2. Magnetic landing reads as a discrete settle, the
+ * editorial register the brief frames the section in.
  */
 
 import { gsap } from 'gsap';
@@ -31,7 +33,6 @@ export const spaceModule: MotionModule = {
       const ko = el.querySelector<HTMLElement>('[data-reveal="ko"]');
       const image = el.querySelector<HTMLElement>('.space__image');
       const cats = el.querySelector<HTMLElement>('.space__cats');
-      const info = el.querySelector<HTMLElement>('.space__info');
       const copy = el.querySelector<HTMLElement>('.space__copy');
 
       // Copy entrance. No ScrollTrigger: section is lazy-imported via
@@ -44,14 +45,11 @@ export const spaceModule: MotionModule = {
       if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
 
       if (reduce || mode === 'mobile') {
-        // Render all three states stacked vertically (CSS handles layout via
-        // (max-width:768px) and prefers-reduced-motion media). Ensure cats
-        // and info are visible — under desktop pin they start at opacity 0.
+        // Stack states vertically (CSS handles layout via media queries).
+        // Cats start at opacity 0 under desktop pin; force visible here.
         if (cats) gsap.set(cats, { opacity: 1, x: 0 });
-        if (info) gsap.set(info, { opacity: 1 });
         if (mode === 'mobile' && !reduce) {
-          // Stagger fade-in for each block.
-          for (const block of [image, cats, info]) {
+          for (const block of [image, cats]) {
             if (!block) continue;
             gsap.from(block, {
               y: 24,
@@ -72,7 +70,7 @@ export const spaceModule: MotionModule = {
           pin: true,
           scrub: 1,
           start: 'top top',
-          end: '+=300%', // matches --pin-space
+          end: '+=200%',
           anticipatePin: 1,
           invalidateOnRefresh: true,
           pinSpacing: true,
@@ -82,35 +80,26 @@ export const spaceModule: MotionModule = {
             ease: 'power1.inOut',
             delay: 0,
           },
-          onEnter: () => activate(el, [image, cats, info]),
-          onEnterBack: () => activate(el, [image, cats, info]),
-          onLeave: () => deactivate(el, [image, cats, info]),
-          onLeaveBack: () => deactivate(el, [image, cats, info]),
+          onEnter: () => activate(el, [image, cats]),
+          onEnterBack: () => activate(el, [image, cats]),
+          onLeave: () => deactivate(el, [image, cats]),
+          onLeaveBack: () => deactivate(el, [image, cats]),
         },
       });
 
       // Initial state.
       if (image) gsap.set(image, { x: 0, scale: 1, opacity: 1 });
       if (cats) gsap.set(cats, { opacity: 0, x: 40 });
-      if (info) gsap.set(info, { opacity: 0 });
 
       tl.addLabel('s1');
 
-      // s1 → s2: image translates left + scales toward dominant; cats fade in;
-      // copy shifts subtly so it stays anchored as image overlaps it.
+      // s1 → s2: image translates left + scales subtly; cats fade in;
+      // copy shifts so it stays anchored as image overlaps it.
       tl.to(image, { x: '-22vw', scale: 1.04, duration: 1 }, 's1');
       tl.to(cats, { opacity: 1, x: 0, duration: 1 }, 's1');
-      if (copy) tl.to(copy, { x: -16, opacity: 0.9, duration: 1 }, 's1');
+      if (copy) tl.to(copy, { x: -16, opacity: 0.92, duration: 1 }, 's1');
 
       tl.addLabel('s2');
-
-      // s2 → s3: image opacity fades to 0.4 and recedes; cats fade out as info appears.
-      tl.to(image, { opacity: 0.4, scale: 1.0, duration: 1 }, 's2');
-      tl.to(cats, { opacity: 0, x: 24, duration: 1 }, 's2');
-      tl.to(info, { opacity: 1, duration: 1 }, 's2');
-      if (copy) tl.to(copy, { opacity: 0.55, duration: 1 }, 's2');
-
-      tl.addLabel('s3');
 
       ScrollTrigger.refresh(true);
     }, el);

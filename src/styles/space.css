@@ -1,12 +1,16 @@
 /* ============================================================================
- * SPACE — three-state crossing transformation.
+ * SPACE — two-state crossing + hover-driven photo swap.
  *
  *   State 1 (sense)     image right · evocative copy left
  *   State 2 (structure) image crosses left and dominates · sub-cats appear right
- *   State 3 (information) image recedes opacity 0.4 · thin line work + numerals
  *
- * No card-shaped elements anywhere (R6). Sub-cats render as a vertical mono
- * list. Info layer is text + 1px hairlines only.
+ * Hover a sub-category → the frame photo cross-fades to that category's
+ * picture. Multiple <Picture>s stack absolutely inside .space__image; the
+ * one with data-active='true' fades in over the rest (R6/R4 — no card UI,
+ * no card shadows).
+ *
+ * Comfortable margins on the left copy column so the section doesn't feel
+ * jammed against the viewport edge.
  * ========================================================================== */
 
 #space {
@@ -15,6 +19,7 @@
   contain: layout paint;
   position: relative;
   overflow: hidden;
+  padding: clamp(3rem, 8vh, 5rem) clamp(2rem, 5vw, 4rem);
 }
 
 #space.is-stub {
@@ -29,45 +34,51 @@
   max-width: 32rem;
 }
 
-.space__layer {
-  position: absolute;
-  inset: 0;
-}
-
-.space__copy {
+/* Copy column — give it real left/right air so it doesn't read jammed. */
+.space__copy,
+#space .section__heading {
   position: absolute;
   z-index: 3;
-  left: clamp(2rem, 6vw, 4rem);
+  left: clamp(3rem, 8vw, 6rem);
   top: 50%;
   transform: translateY(-50%);
-  max-width: min(32rem, 50vw);
+  max-width: min(32rem, 46vw);
   display: grid;
   gap: 0.875rem;
   pointer-events: none;
+  margin: 0;
 }
 
-.space__copy .display-lg {
+#space .section__heading .display-lg {
   margin: 0;
   color: var(--color-ink);
 }
 
-.space__copy .display-ko-md {
+#space .section__heading .display-ko-md {
   color: var(--color-ink);
   opacity: 0.72;
   margin: 0;
 }
 
+/* Image frame — stacked Pictures, hover swap via data-active. */
 .space__image {
   position: absolute;
   z-index: 1;
   top: 50%;
-  right: clamp(2rem, 6vw, 4rem);
+  right: clamp(3rem, 8vw, 6rem);
   transform: translateY(-50%);
   width: clamp(20rem, 38vw, 32rem);
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: var(--hairline) solid var(--color-hair);
-  transform-origin: center;
+  background: var(--color-bone);
+}
+
+.space__image picture,
+.space__cat-image {
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 
 .space__image img {
@@ -77,31 +88,63 @@
   display: block;
 }
 
-/* Sub-category list — appears in state 2 */
+.space__cat-image {
+  opacity: 0;
+  transition: opacity 360ms var(--ease-editorial);
+}
+
+.space__cat-image[data-active='true'] {
+  opacity: 1;
+}
+
+/* Sub-category list — appears in state 2, hover-interactive. */
 .space__cats {
   position: absolute;
   z-index: 2;
-  right: clamp(2rem, 6vw, 4rem);
+  right: clamp(3rem, 8vw, 6rem);
   top: 50%;
   transform: translateY(-50%);
-  width: clamp(16rem, 28vw, 22rem);
+  width: clamp(18rem, 30vw, 24rem);
   display: grid;
-  gap: 0.5rem;
+  gap: 0.25rem;
   opacity: 0;
-  pointer-events: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .space__cat {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: baseline;
-  padding: 0.6rem 0;
+  padding: 0.85rem 0.75rem;
   border-top: var(--hairline) solid var(--color-hair);
   color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background 200ms var(--ease-editorial),
+    border-color 200ms var(--ease-editorial),
+    color 200ms var(--ease-editorial);
+  outline: none;
 }
 
 .space__cat:last-child {
   border-bottom: var(--hairline) solid var(--color-hair);
+}
+
+.space__cat[data-active='true'],
+.space__cat:hover,
+.space__cat:focus-visible {
+  border-top-color: var(--color-brass);
+  background: rgba(244, 239, 230, 0.85);
+}
+
+.space__cat[data-active='true'] + .space__cat {
+  border-top-color: var(--color-brass);
+}
+
+.space__cat-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: 0.4rem;
 }
 
 .space__cat-label {
@@ -115,84 +158,46 @@
 .space__cat-meta {
   text-align: right;
   color: var(--color-ink);
-  opacity: 0.62;
-}
-
-/* Info layer — appears in state 3, replaces sub-cats area */
-.space__info {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.space__info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 2rem);
-  width: min(48rem, 88vw);
-  padding: clamp(1rem, 3vw, 2rem);
-}
-
-.space__info-item {
-  display: grid;
-  gap: 0.4rem;
-  padding-top: 0.75rem;
-  border-top: var(--hairline) solid var(--color-brass);
-}
-
-.space__info-label {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(0.95rem, 1.3vw, 1.0625rem);
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
-}
-
-.space__info-numerals {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.space__info-numerals span {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink);
-  opacity: 0.65;
-}
-
-.space__info-note {
-  color: var(--color-ink);
   opacity: 0.6;
+  justify-self: end;
+}
+
+.space__cat-note {
+  margin: 0.4rem 0 0;
   font-size: 0.8125rem;
   line-height: 1.5;
+  color: var(--color-ink);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    opacity 240ms var(--ease-editorial),
+    max-height 240ms var(--ease-editorial);
+}
+
+.space__cat[data-active='true'] .space__cat-note,
+.space__cat:hover .space__cat-note,
+.space__cat:focus-visible .space__cat-note {
+  opacity: 0.78;
+  max-height: 4.5rem;
 }
 
 #space .section__index {
   z-index: 5;
 }
 
-/* Mobile + reduced-motion: stack the three states vertically as
-   separate blocks. No pin, no crossing transformation. */
+/* Mobile + reduced-motion: stack the column + image + list as separate
+   blocks. No pin, no crossing transformation. */
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
   #space {
     height: auto;
     min-height: auto;
     padding: 6rem clamp(1rem, 5vw, 3rem) 4rem;
   }
-  .space__layer {
-    position: static;
-  }
   .space__copy,
+  #space .section__heading,
   .space__image,
-  .space__cats,
-  .space__info {
+  .space__cats {
     position: static;
     transform: none;
     opacity: 1;
@@ -205,11 +210,7 @@
     aspect-ratio: 4 / 3;
     width: 100%;
   }
-  .space__info {
-    place-items: start;
-  }
-  .space__info-grid {
-    width: 100%;
-    grid-template-columns: 1fr;
+  .space__cats {
+    gap: 0.5rem;
   }
 }

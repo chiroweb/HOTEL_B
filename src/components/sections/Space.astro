@@ -5,8 +5,6 @@ import SectionWrapper from '../SectionWrapper.astro';
 import { getImage } from '../../lib/asset';
 import { SPACE_CATEGORIES } from '../../data/space-content';
 import '../../styles/space.css';
-
-const hero = getImage('SPACE-HERO');
 ---
 
 <SectionWrapper id="space" index="05" title="THE SPACE" pinned>
@@ -18,50 +16,51 @@ const hero = getImage('SPACE-HERO');
   </span>
 
   <div class="space__image">
-    <Picture
-      src={hero.import}
-      alt={hero.alt}
-      widths={[600, 900, 1200]}
-      sizes={hero.sizes}
-      formats={['avif', 'webp']}
-      fallbackFormat="jpg"
-      loading="lazy"
-      decoding="async"
-    />
+    {
+      SPACE_CATEGORIES.map((cat, i) => {
+        const img = getImage(cat.imageId);
+        return (
+          <Picture
+            src={img.import}
+            alt={img.alt}
+            widths={[600, 900, 1200]}
+            sizes={img.sizes}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            loading="lazy"
+            decoding="async"
+            pictureAttributes={{
+              class: 'space__cat-image',
+              'data-cat-image': cat.id,
+              'data-active': i === 0 ? 'true' : 'false',
+            }}
+          />
+        );
+      })
+    }
   </div>
 
   <ul class="space__cats" aria-label="Sub-categories">
     {
-      SPACE_CATEGORIES.map((cat) => (
-        <li class="space__cat">
-          <div>
+      SPACE_CATEGORIES.map((cat, i) => (
+        <li
+          class="space__cat"
+          data-cat={cat.id}
+          data-active={i === 0 ? 'true' : 'false'}
+          tabindex="0"
+        >
+          <div class="space__cat-row">
             <span class="space__cat-label">{cat.label}</span>
-            <span class="label-mono-sm" lang="ko"> &nbsp;{cat.labelKo}</span>
+            <span class="label-mono-sm" lang="ko">&nbsp;{cat.labelKo}</span>
+            <span class="space__cat-meta label-mono-sm numeral">
+              {cat.count} &middot; {cat.area}
+            </span>
           </div>
-          <div class="space__cat-meta label-mono-sm numeral">
-            {cat.count} &middot; {cat.area}
-          </div>
+          {cat.note && <p class="space__cat-note">{cat.note}</p>}
         </li>
       ))
     }
   </ul>
-
-  <div class="space__info" aria-label="Information">
-    <div class="space__info-grid">
-      {
-        SPACE_CATEGORIES.map((cat) => (
-          <div class="space__info-item">
-            <span class="space__info-label">{cat.label}</span>
-            <div class="space__info-numerals">
-              <span class="numeral">{cat.count.toString().padStart(2, '0')} units</span>
-              <span class="numeral">{cat.area}</span>
-            </div>
-            {cat.note && <p class="space__info-note">{cat.note}</p>}
-          </div>
-        ))
-      }
-    </div>
-  </div>
 </SectionWrapper>
 
 <script>
@@ -69,7 +68,34 @@ const hero = getImage('SPACE-HERO');
   import { currentMode } from '../../lib/motion/breakpoint';
 
   const el = document.getElementById('space');
-  if (el) {
+  if (!el) {
+    /* nothing to wire */
+  } else {
+    // Category hover → cross-fade the frame photo. Activates on
+    // mouseenter (desktop) and focus (keyboard). One-active-at-a-time;
+    // initial active is whichever item ships with data-active='true'.
+    const cats = el.querySelectorAll<HTMLElement>('.space__cat');
+    const images = el.querySelectorAll<HTMLElement>('[data-cat-image]');
+
+    const activate = (id: string) => {
+      cats.forEach((c) => {
+        c.dataset.active = c.dataset.cat === id ? 'true' : 'false';
+      });
+      images.forEach((im) => {
+        im.dataset.active = im.dataset.catImage === id ? 'true' : 'false';
+      });
+    };
+
+    cats.forEach((c) => {
+      const enter = () => {
+        const id = c.dataset.cat;
+        if (id) activate(id);
+      };
+      c.addEventListener('mouseenter', enter);
+      c.addEventListener('focus', enter);
+    });
+
+    // Lazy motion module register.
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {

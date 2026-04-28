@@ -102,9 +102,15 @@
   grid-area: copy;
   display: grid;
   gap: 0.625rem;
-  width: min(60vw, 60rem);
+  width: min(56vw, 54rem);
   text-align: left;
-  margin: 0;
+  /* Break the frame-aligned left edge — copy nudges left and pulls up so
+     it overlaps the frame's lower-left corner instead of stacking flush
+     beneath. Reads as overlapping plates, not two boxes sharing an axis. */
+  justify-self: start;
+  margin: calc(-1 * clamp(2.5rem, 7vh, 4.5rem)) 0 0 clamp(1.5rem, 5vw, 4rem);
+  z-index: 2;
+  position: relative;
 }
 
 @media (max-width: 768px) {
