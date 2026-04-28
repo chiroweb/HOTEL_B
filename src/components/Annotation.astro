@@ -1,0 +1,97 @@
+---
+/**
+ * Annotation — architectural label with 1px brass hairline pointer.
+ *
+ * Renders right-anchored within an absolute-positioned overlay (the
+ * parent should be position: relative + the overlay container).
+ * Initial state is hidden (data-state="hidden"); a motion module flips
+ * to data-state="visible" at the desired progress threshold.
+ *
+ * Brass scope (R4): the hairline span is the ONLY brass element here.
+ * Label uses ink (inherits from section). The hairline is informational
+ * — it points to a feature region of the image, not decorative.
+ */
+
+interface Props {
+  /** Mono label text. */
+  label: string;
+  /** Vertical position in % from top of the parent overlay (0–100). */
+  y: number;
+  /** Horizontal extent of the brass pointer hairline. */
+  pointerLength?: string;
+}
+
+const { label, y, pointerLength = '8vw' } = Astro.props;
+---
+
+<div
+  class="annotation"
+  data-annotation
+  data-state="hidden"
+  style={`--annotation-y: ${y}%; --annotation-pointer: ${pointerLength};`}
+>
+  <span class="annotation__hairline" data-hairline aria-hidden="true"></span>
+  <span class="annotation__label label-mono">{label}</span>
+</div>
+
+<style>
+  .annotation {
+    position: absolute;
+    top: var(--annotation-y);
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    /* Anchor the right edge ~1.5vw outside the frame so labels read against
+       the section's ivory background, not on top of the photo. */
+    padding-right: clamp(0.5rem, 1.5vw, 1rem);
+  }
+
+  .annotation__hairline {
+    display: block;
+    width: var(--annotation-pointer);
+    height: var(--hairline);
+    background: var(--color-brass);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform var(--duration-state-cross) var(--ease-editorial);
+  }
+
+  .annotation__label {
+    color: var(--color-ink);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity var(--duration-state-cross) var(--ease-editorial),
+      transform var(--duration-state-cross) var(--ease-editorial);
+    transition-delay: 60ms; /* hairline draws first by ≈60ms */
+  }
+
+  .annotation[data-state='visible'] .annotation__hairline {
+    transform: scaleX(1);
+  }
+
+  .annotation[data-state='visible'] .annotation__label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .annotation {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .annotation .annotation__hairline {
+      transform: scaleX(1);
+      transition: none;
+    }
+    .annotation .annotation__label {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

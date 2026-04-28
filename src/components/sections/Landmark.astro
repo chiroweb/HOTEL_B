@@ -2,10 +2,24 @@
 import { Picture } from 'astro:assets';
 
 import SectionWrapper from '../SectionWrapper.astro';
+import Annotation from '../Annotation.astro';
 import { getImage } from '../../lib/asset';
 import '../../styles/landmark.css';
 
 const facade = getImage('LANDMARK-02');
+
+interface AnnotationSpec {
+  label: string;
+  y: number; // % from top of overlay container
+}
+
+// Tied to LANDMARK-02's feature regions: glass curtain wall (upper),
+// vertical fin pattern (middle), sunset reflection (lower).
+const annotations: AnnotationSpec[] = [
+  { label: 'Facade', y: 22 },
+  { label: 'Rhythm', y: 55 },
+  { label: 'Light', y: 82 },
+];
 ---
 
 <SectionWrapper id="landmark" index="02" title="VERTICAL">
@@ -29,7 +43,7 @@ const facade = getImage('LANDMARK-02');
       pictureAttributes={{ class: 'landmark__picture' }}
     />
     <div class="landmark__overlay" data-overlay aria-hidden="true">
-      {/* Annotations are inserted in Unit 2 */}
+      {annotations.map((a) => <Annotation label={a.label} y={a.y} />)}
     </div>
   </div>
 </SectionWrapper>

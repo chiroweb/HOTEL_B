@@ -86,7 +86,13 @@
 
 .landmark__overlay {
   position: absolute;
-  inset: 0;
+  /* Extend the overlay to the right of the frame so annotation labels
+     can sit on the ivory background while their hairlines still extend
+     into the image. */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: calc(-1 * clamp(8rem, 12vw, 12rem));
   pointer-events: none;
 }
 
