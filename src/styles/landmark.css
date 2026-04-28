@@ -1,116 +1,21 @@
 /* ============================================================================
- * LANDMARK — single-image architectural spread.
+ * LANDMARK — Section 2 cleared.
  *
- * Layout (Unit 1):
- *   • Frame:   centered ≈70vw, aspect 4:5 (LANDMARK-02 native), 1px hair border.
- *   • Copy:    below frame, left-aligned to frame edge.
- *   • Section index: top-right (sections.css default).
- *
- * Annotation overlay is wired in Unit 2; CSS for [data-annotation]
- * lives there. Motion choreography (200svh pin + sequential reveal)
- * is wired in Unit 3.
+ * Architectural-annotation refactor was rolled back at the user's request;
+ * the section is intentionally blank pending a fresh design direction.
+ * Wrapper styles only.
  * ========================================================================== */
 
 #landmark {
-  display: grid;
-  grid-template-areas:
-    'frame'
-    'copy';
-  grid-template-rows: auto auto;
-  align-content: center;
-  justify-items: center;
-  gap: clamp(1.25rem, 3.5vh, 2.5rem);
   background: var(--color-ivory);
   color: var(--color-ink);
-  contain: layout paint;
   min-height: 100svh;
-  padding: clamp(4rem, 12vh, 8rem) clamp(2rem, 6vw, 6rem) clamp(2rem, 8vh, 4rem);
   position: relative;
-  overflow: hidden;
-}
-
-#landmark.is-stub {
   display: grid;
-}
-
-/* section__body has display: contents — its children participate in the
-   section's grid via grid-area. */
-#landmark .landmark__frame {
-  grid-area: frame;
-}
-
-#landmark .section__heading {
-  grid-area: copy;
-  display: grid;
-  gap: 0.625rem;
-  width: min(46vw, 36rem);
-  text-align: left;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  #landmark .section__heading {
-    width: 90vw;
-  }
-}
-
-/* Frame ---------------------------------------------------------------- */
-
-/* Frame is sized to fit viewport vertically alongside the copy below.
-   width × aspect 4:5 must clear viewport height with room for padding +
-   copy. max-height clamps the frame even on ultra-narrow desktop. */
-.landmark__frame {
-  position: relative;
-  width: min(46vw, 36rem);
-  max-height: 64svh;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background: var(--color-bone);
-  border: var(--hairline) solid var(--color-hair);
-}
-
-@media (max-width: 768px) {
-  .landmark__frame {
-    width: 80vw;
-    max-height: 60svh;
-  }
-}
-
-.landmark__frame .landmark__picture,
-.landmark__frame img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-.landmark__frame img {
-  object-fit: cover;
-  object-position: center;
-}
-
-.landmark__overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-#landmark .section__heading .display-lg {
-  margin: 0;
-  color: var(--color-ink);
-}
-
-#landmark .section__heading .display-ko-md {
-  color: var(--color-ink);
-  opacity: 0.72;
-  margin: 0;
+  align-content: center;
+  justify-items: center;
 }
 
 #landmark .section__index {
   z-index: 3;
 }
-
-/* Reduced-motion: layout already static; no overrides needed at the
-   section level. Annotation rules (Unit 2) carry their own reduced-
-   motion media query. */

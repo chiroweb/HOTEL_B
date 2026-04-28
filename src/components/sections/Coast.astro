@@ -17,6 +17,19 @@ const poster = getImage('PROLOGUE-01');
     랜드마크보다 먼저, 해안선이 있다.
   </span>
 
+  <div class="coast__bg" aria-hidden="true">
+    <Picture
+      src={poster.import}
+      alt=""
+      widths={[1280, 1920, 2560]}
+      sizes="100vw"
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+
   <div class="coast__frame" data-hero-layer>
     <Picture
       src={poster.import}

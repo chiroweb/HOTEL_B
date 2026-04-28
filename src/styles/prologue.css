@@ -34,6 +34,53 @@
   overflow: hidden;
 }
 
+/* Backdrop photo (PROLOGUE-01) — sits behind the editorial frame so the
+   section's outer area carries the coast atmosphere instead of flat ivory.
+   A soft ivory veil keeps the frame the focal point and protects the copy
+   contrast. */
+.coast__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.coast__bg picture,
+.coast__bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.coast__bg img {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.92);
+}
+
+.coast__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(244, 239, 230, 0.62) 0%,
+    rgba(244, 239, 230, 0.78) 50%,
+    rgba(244, 239, 230, 0.92) 100%
+  );
+}
+
+#coast > .section__index,
+#coast > .section__heading,
+#coast > .section__body,
+#coast > .coast__pause {
+  position: relative;
+  z-index: 1;
+}
+
 #coast.is-stub {
   display: grid;
 }
