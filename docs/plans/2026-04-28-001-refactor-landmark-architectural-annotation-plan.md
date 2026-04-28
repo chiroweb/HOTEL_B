@@ -1,8 +1,9 @@
 ---
 title: LANDMARK Section as Architectural Annotation Spread
 type: refactor
-status: active
+status: completed
 date: 2026-04-28
+completed: 2026-04-28
 origin: docs/plans/2026-04-27-001-feat-songjeong-landmark-site-plan.md
 ---
 
@@ -168,7 +169,7 @@ Mobile branch (`mode === 'mobile'`) returns immediately after copy reveal — pi
 
 ## Implementation Units
 
-- [ ] **Unit 1: Section restructure — single-image layout + manifest cleanup**
+- [x] **Unit 1: Section restructure — single-image layout + manifest cleanup**
 
 **Goal:** LANDMARK section renders LANDMARK-02 as a centered/full-bleed image with copy below; the CG twin-tower image is no longer referenced anywhere in the codebase. Layout is ready to receive annotation overlays in Unit 2.
 
@@ -201,7 +202,7 @@ Mobile branch (`mode === 'mobile'`) returns immediately after copy reveal — pi
 
 ---
 
-- [ ] **Unit 2: Annotation primitive + overlay system**
+- [x] **Unit 2: Annotation primitive + overlay system**
 
 **Goal:** Reusable `<Annotation>` component renders a mono label with a 1px brass hairline pointer, parametrized by Y position and label text. Three instances placed over the LANDMARK-02 image.
 
@@ -238,7 +239,7 @@ Mobile branch (`mode === 'mobile'`) returns immediately after copy reveal — pi
 
 ---
 
-- [ ] **Unit 3: Motion choreography — sequential reveal + cleanup**
+- [x] **Unit 3: Motion choreography — sequential reveal + cleanup**
 
 **Goal:** Rewrite `landmark.ts`. Pin section 200svh; scrub a timeline that reveals display+KR copy first, then sequentially toggles `[data-state='visible']` on each annotation at progress thresholds 0.20 / 0.45 / 0.70. Mobile and reduced-motion paths return early.
 
