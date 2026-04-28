@@ -1,12 +1,23 @@
 /**
- * LANDMARK motion module — vertical rise (Stage 1) + single horizontal
- * decomposition event (Stage 2). One ScrollTrigger pin, one scrubbed
- * timeline carrying both stages so the transition reads as one event,
- * not a slide change.
+ * LANDMARK motion module — single-image architectural spread with
+ * sequential annotation reveal.
  *
- * Vestibular safety: scale capped at 1.03 (per WCAG 2.3.3 guidance).
- * Layer discipline: will-change toggled on enter/leave only; contain
- * layout paint removed when active.
+ * Choreography:
+ *   1. Entrance reveal (outside the pin; once: true): mono index +
+ *      display + KR copy fade in as the section approaches viewport.
+ *   2. Pin scrub (200svh): three annotations toggle [data-state] from
+ *      'hidden' → 'visible' at progress thresholds 0.20 / 0.45 / 0.70.
+ *      The image itself stays static — no scale, no parallax. Each
+ *      annotation's CSS transition (480ms editorial) handles the
+ *      hairline draw and label fade independently.
+ *
+ * Mobile (mode='mobile'): pin not constructed; only the entrance
+ * reveal runs. Annotations are display:none via CSS so no toggle work
+ * is needed.
+ *
+ * Reduced-motion: pin not constructed; entrance reveal runs flat (no
+ * y drift). CSS sets annotations to the visible state by default
+ * under the reduce media query.
  */
 
 import { gsap } from 'gsap';
@@ -16,6 +27,7 @@ import { shouldReduce } from './reduced-motion';
 import type { MotionModule } from './types';
 
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const ANNOTATION_THRESHOLDS = [0.2, 0.45, 0.7] as const;
 
 export const landmarkModule: MotionModule = {
   id: 'landmark',
@@ -23,113 +35,92 @@ export const landmarkModule: MotionModule = {
     return gsap.context(() => {
       const reduce = shouldReduce();
 
-      const tower = el.querySelector<HTMLElement>('.landmark__tower');
-      const towerImg = el.querySelector<HTMLImageElement>('.landmark__tower img');
-      const detail = el.querySelector<HTMLElement>('.landmark__detail');
-      const caption = el.querySelector<HTMLElement>('.landmark__caption');
-      const copy = el.querySelector<HTMLElement>('.landmark__copy');
       const monoLabel = el.querySelector<HTMLElement>('[data-reveal="mono"]');
-      const display = el.querySelector<HTMLElement>('[data-reveal="display"]');
-      const ko = el.querySelector<HTMLElement>('[data-reveal="ko"]');
+      const displayHeading = el.querySelector<HTMLElement>('[data-reveal="display"]');
+      const koLine = el.querySelector<HTMLElement>('[data-reveal="ko"]');
+      const frame = el.querySelector<HTMLElement>('.landmark__frame');
+      const annotations = Array.from(
+        el.querySelectorAll<HTMLElement>('[data-annotation]')
+      );
 
-      // ---- Copy reveal (entrance) ----
+      // ---- Entrance reveal (always runs, outside the pin) ----
       const enter = gsap.timeline({
         defaults: { ease: EASE },
         scrollTrigger: { trigger: el, start: 'top 70%', once: true },
       });
       const dy = reduce ? 0 : 18;
       if (monoLabel) enter.from(monoLabel, { y: dy, opacity: 0, duration: 0.6 }, 0);
-      if (display) enter.from(display, { y: reduce ? 0 : 24, opacity: 0, duration: 0.86 }, 0.08);
-      if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
+      if (frame) enter.from(frame, { y: reduce ? 0 : 22, opacity: 0, duration: 0.95 }, 0.04);
+      if (displayHeading)
+        enter.from(displayHeading, { y: reduce ? 0 : 24, opacity: 0, duration: 0.86 }, 0.42);
+      if (koLine) enter.from(koLine, { y: dy, opacity: 0, duration: 0.7 }, 0.62);
 
-      if (reduce) return; // static stacked layout via @media-reduced CSS
+      // Mobile + reduced-motion: skip pin entirely.
+      // Annotations either hidden (mobile) or visible-by-default (reduce)
+      // via CSS — no toggle needed here.
+      if (reduce || mode === 'mobile') return;
 
-      // ---- Mobile: skip pin; tower + detail render stacked via CSS, fade in.
-      if (mode === 'mobile') {
-        if (detail) gsap.set(detail, { opacity: 1 });
-        if (tower) gsap.from(tower, {
-          y: 28, opacity: 0, duration: 0.86,
-          ease: EASE,
-          scrollTrigger: { trigger: tower, start: 'top 85%', once: true },
-        });
-        if (detail) gsap.from(detail, {
-          y: 28, opacity: 0, duration: 0.86,
-          ease: EASE,
-          scrollTrigger: { trigger: detail, start: 'top 85%', once: true },
-        });
-        if (caption) gsap.from(caption, {
-          y: 16, opacity: 0, duration: 0.7,
-          ease: EASE,
-          scrollTrigger: { trigger: caption, start: 'top 90%', once: true },
-        });
-        return;
-      }
+      if (annotations.length === 0) return;
 
-      // ---- Pinned scrub: Stage 1 + Stage 2 ----
-      const pin = gsap.timeline({
-        defaults: { ease: 'none' },
+      // ---- Pin scrub: sequential annotation reveal ----
+      // Reset annotations to hidden in case of HMR mid-scroll restart.
+      for (const a of annotations) a.dataset.state = 'hidden';
+
+      let activeIndex = -1;
+
+      gsap.to(el, {
         scrollTrigger: {
           trigger: el,
           pin: true,
-          scrub: 0.6,
+          scrub: 1,
           start: 'top top',
           end: '+=200%', // matches --pin-landmark
           anticipatePin: 1,
           invalidateOnRefresh: true,
           pinSpacing: true,
-          onEnter: () => activate(el, tower, detail),
-          onEnterBack: () => activate(el, tower, detail),
-          onLeave: () => deactivate(el, tower, detail),
-          onLeaveBack: () => deactivate(el, tower, detail),
+          onEnter: () => activate(el, annotations),
+          onEnterBack: () => activate(el, annotations),
+          onLeave: () => deactivate(el, annotations),
+          onLeaveBack: () => deactivate(el, annotations),
+          onUpdate: ({ progress }) => {
+            // Largest threshold index that progress has crossed.
+            // -1 means none yet (all hidden).
+            let next = -1;
+            for (let i = 0; i < ANNOTATION_THRESHOLDS.length; i++) {
+              if (progress >= ANNOTATION_THRESHOLDS[i]) next = i;
+            }
+            if (next === activeIndex) return;
+            activeIndex = next;
+            for (let i = 0; i < annotations.length; i++) {
+              annotations[i].dataset.state = i <= next ? 'visible' : 'hidden';
+            }
+          },
         },
       });
 
-      // Stage 1 (0 → 0.6): camera tilt up — object-position moves from bottom to top.
-      if (towerImg) {
-        pin.to(
-          towerImg,
-          { objectPosition: 'center top', duration: 0.6 },
-          0
-        );
-      }
-
-      // Stage 2 (0.6 → 1.0): tower translates left, facade enters from right.
-      if (tower) {
-        pin.to(tower, { xPercent: -15, scale: 1.03, duration: 0.4 }, 0.6);
-      }
-      if (detail) {
-        gsap.set(detail, { xPercent: 12 });
-        pin.to(detail, { xPercent: 0, opacity: 1, duration: 0.4 }, 0.6);
-      }
-      if (caption) {
-        pin.to(caption, { opacity: 1, duration: 0.3 }, 0.78);
-      }
-
-      // Tiny copy parallax during pin (subtle, NOT theatric).
-      if (copy) {
-        pin.to(copy, { yPercent: -6, duration: 1 }, 0);
-      }
-
-      // Force initial layout offsets to recompute after pin construction.
       ScrollTrigger.refresh(true);
     }, el);
   },
 };
 
-function activate(el: HTMLElement, tower: HTMLElement | null, detail: HTMLElement | null): void {
+function activate(el: HTMLElement, annotations: HTMLElement[]): void {
   el.style.contain = '';
-  if (tower) tower.style.willChange = 'transform';
-  if (detail) detail.style.willChange = 'transform, opacity';
+  for (const a of annotations) {
+    const hairline = a.querySelector<HTMLElement>('[data-hairline]');
+    if (hairline) hairline.style.willChange = 'transform';
+  }
 }
 
-function deactivate(el: HTMLElement, tower: HTMLElement | null, detail: HTMLElement | null): void {
+function deactivate(el: HTMLElement, annotations: HTMLElement[]): void {
   el.style.contain = 'layout paint';
-  if (tower) tower.style.willChange = '';
-  if (detail) detail.style.willChange = '';
+  for (const a of annotations) {
+    const hairline = a.querySelector<HTMLElement>('[data-hairline]');
+    if (hairline) hairline.style.willChange = '';
+  }
 }
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    /* registry handles atomic teardown on next module register */
+    /* registry handles teardown on next module register */
   });
 }
