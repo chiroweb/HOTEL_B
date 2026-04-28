@@ -44,10 +44,11 @@ export const landmarkModule: MotionModule = {
       );
 
       // ---- Entrance reveal (always runs, outside the pin) ----
-      const enter = gsap.timeline({
-        defaults: { ease: EASE },
-        scrollTrigger: { trigger: el, start: 'top 70%', once: true },
-      });
+      // No ScrollTrigger: the section module is lazy-imported via
+      // IntersectionObserver(rootMargin:50%), so init() already fires near
+      // viewport. A 'top 70%' ScrollTrigger added at this point would miss
+      // its window if the user scrolled fast, leaving from()-state stuck.
+      const enter = gsap.timeline({ defaults: { ease: EASE } });
       const dy = reduce ? 0 : 18;
       if (monoLabel) enter.from(monoLabel, { y: dy, opacity: 0, duration: 0.6 }, 0);
       if (frame) enter.from(frame, { y: reduce ? 0 : 22, opacity: 0, duration: 0.95 }, 0.04);

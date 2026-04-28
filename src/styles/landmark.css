@@ -43,7 +43,7 @@
   grid-area: copy;
   display: grid;
   gap: 0.625rem;
-  width: min(70vw, 60rem);
+  width: min(46vw, 36rem);
   text-align: left;
   margin: 0;
 }
@@ -56,9 +56,13 @@
 
 /* Frame ---------------------------------------------------------------- */
 
+/* Frame is sized to fit viewport vertically alongside the copy below.
+   width × aspect 4:5 must clear viewport height with room for padding +
+   copy. max-height clamps the frame even on ultra-narrow desktop. */
 .landmark__frame {
   position: relative;
-  width: min(70vw, 60rem);
+  width: min(46vw, 36rem);
+  max-height: 64svh;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: var(--color-bone);
@@ -67,7 +71,8 @@
 
 @media (max-width: 768px) {
   .landmark__frame {
-    width: 90vw;
+    width: 80vw;
+    max-height: 60svh;
   }
 }
 

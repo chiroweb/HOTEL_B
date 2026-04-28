@@ -34,11 +34,10 @@ export const spaceModule: MotionModule = {
       const info = el.querySelector<HTMLElement>('.space__info');
       const copy = el.querySelector<HTMLElement>('.space__copy');
 
-      // Copy entrance.
-      const enter = gsap.timeline({
-        defaults: { ease: EASE },
-        scrollTrigger: { trigger: el, start: 'top 70%', once: true },
-      });
+      // Copy entrance. No ScrollTrigger: section is lazy-imported via
+      // IntersectionObserver(rootMargin:50%); a 'top 70%' trigger here
+      // would miss its window on fast scroll, leaving from()-state stuck.
+      const enter = gsap.timeline({ defaults: { ease: EASE } });
       const dy = reduce ? 0 : 18;
       if (monoLabel) enter.from(monoLabel, { y: dy, opacity: 0, duration: 0.6 }, 0);
       if (display) enter.from(display, { y: reduce ? 0 : 24, opacity: 0, duration: 0.86 }, 0.08);

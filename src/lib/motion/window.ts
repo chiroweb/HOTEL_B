@@ -33,10 +33,10 @@ export const windowModule: MotionModule = {
       const floatB = el.querySelector<HTMLElement>('.window__float--b');
 
       // Copy reveal once on enter.
-      const enter = gsap.timeline({
-        defaults: { ease: EASE },
-        scrollTrigger: { trigger: el, start: 'top 70%', once: true },
-      });
+      // No ScrollTrigger: section module is lazy-imported via
+      // IntersectionObserver(rootMargin:50%); a 'top 70%' trigger added here
+      // would miss its window on fast scroll, leaving from()-state stuck.
+      const enter = gsap.timeline({ defaults: { ease: EASE } });
       const dy = reduce ? 0 : 16;
       if (monoLabel) enter.from(monoLabel, { y: dy, opacity: 0, duration: 0.6 }, 0);
       if (display) enter.from(display, { y: reduce ? 0 : 22, opacity: 0, duration: 0.84 }, 0.08);
