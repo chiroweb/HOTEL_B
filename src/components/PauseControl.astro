@@ -31,15 +31,15 @@ const { controlsId, initialLabel = 'Pause hero video' } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.25rem 0;
     background: transparent;
     border: 0;
-    color: var(--color-ivory);
+    color: currentColor;
     cursor: pointer;
     transition:
       color 240ms var(--ease-editorial),
       opacity 240ms var(--ease-editorial);
-    opacity: 0.85;
+    opacity: 0.7;
   }
   .pause-control:hover,
   .pause-control:focus-visible {

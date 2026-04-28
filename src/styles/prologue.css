@@ -1,41 +1,91 @@
 /* ============================================================================
- * PROLOGUE — discovery hero (Unit 6).
+ * COAST / PROLOGUE — centered editorial video frame.
  *
- * LCP element is the poster <img>, which is the FIRST visual element rendered
- * here (Astro <Image> with loading="eager" fetchpriority="high"). The <video>
- * element is mounted later by prologue.ts on window.load and fades in over
- * 240ms above the poster (poster stays underneath as graceful fallback).
+ * The frame is a finite, bordered window into the coast — not a full-bleed
+ * image. This is the magazine-spread register: user "looks at" the coast
+ * (editorial distance) rather than being placed "inside" it (advertorial
+ * immersion). All other sections compose around the same logic.
+ *
+ * Layout:
+ *   • Section index (sections.css default): top-left absolute.
+ *   • Frame:        centered, 60vw width, 16:9, 1px hairline border.
+ *   • Copy + pause: below the frame, left-aligned to the frame edge.
+ *
+ * LCP element is the <Picture> poster inside the frame (decoding=sync,
+ * fetchpriority=high). The <video> mounts inside the same frame on
+ * window.load and fades over the poster — the LCP measurement is unchanged.
  * ========================================================================== */
 
 #coast {
+  display: grid;
+  grid-template-areas:
+    'frame'
+    'copy'
+    'pause';
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(1.25rem, 3.5vh, 2.5rem);
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  min-height: 100svh;
+  padding: clamp(4rem, 12vh, 8rem) clamp(2rem, 6vw, 6rem) clamp(2rem, 8vh, 4rem);
   position: relative;
-  background: var(--color-ink); /* dark backstop while poster decodes */
-  color: var(--color-ivory);
   overflow: hidden;
 }
 
 #coast.is-stub {
-  /* override Unit 5 stub mode now that PROLOGUE has its own layout */
   display: grid;
 }
 
-#coast.is-stub .section__heading {
-  align-self: end;
-  justify-self: start;
+/* section__body is `display: contents` (sections.css default), so its
+   children (.coast__frame, .coast__pause) participate directly in the
+   section's grid via grid-area. */
+#coast .coast__frame {
+  grid-area: frame;
+}
+
+#coast .coast__pause {
+  grid-area: pause;
+  width: min(60vw, 60rem);
+  justify-self: center;
+}
+
+#coast .section__heading {
+  grid-area: copy;
+  display: grid;
+  gap: 0.625rem;
+  width: min(60vw, 60rem);
   text-align: left;
-  max-width: none;
   margin: 0;
-  padding: 0;
 }
 
-.coast__hero {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+@media (max-width: 768px) {
+  #coast .section__heading,
+  #coast .coast__pause {
+    width: 90vw;
+  }
 }
 
-.coast__hero img,
-.coast__hero video {
+/* Frame ---------------------------------------------------------------- */
+
+.coast__frame {
+  position: relative;
+  width: min(60vw, 60rem);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-bone);
+  border: var(--hairline) solid var(--color-hair);
+}
+
+@media (max-width: 768px) {
+  .coast__frame {
+    width: 90vw;
+  }
+}
+
+.coast__frame img,
+.coast__frame video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -43,74 +93,51 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  will-change: auto; /* gsap promotes this only when scrub is active */
 }
 
-.coast__hero video {
+.coast__frame video {
   opacity: 0;
   transition: opacity 240ms var(--ease-editorial);
 }
 
-/* Subtle top + bottom mask for copy contrast — NOT a decorative full overlay
-   (R6 prohibits decorative panels). 1.5vh top, 2.5vh bottom only. */
-.coast__hero::before,
-.coast__hero::after {
+/* Copy ----------------------------------------------------------------- */
+
+#coast .section__heading .display-lg {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+#coast .section__heading .display-ko-md {
+  color: var(--color-ink);
+  opacity: 0.72;
+  margin: 0;
+}
+
+/* Pause control sits below the copy, brass-hinted with a 1px lead. */
+.coast__pause {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.coast__pause::before {
   content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-.coast__hero::before {
-  top: 0;
-  height: 22vh;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, transparent 100%);
-}
-.coast__hero::after {
-  bottom: 0;
-  height: 30vh;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, transparent 100%);
-}
-
-.coast__copy {
-  position: absolute;
-  z-index: 2;
-  left: clamp(1rem, 5vw, 4rem);
-  bottom: clamp(3rem, 9vh, 6rem);
-  max-width: min(38rem, 92vw);
-  color: var(--color-ivory);
-  display: grid;
-  gap: 0.875rem;
-}
-
-.coast__copy .display-lg {
-  margin: 0;
-  color: var(--color-ivory);
-}
-
-.coast__copy .display-ko-md {
-  color: var(--color-ivory);
-  opacity: 0.78;
-  margin: 0;
+  display: block;
+  width: clamp(1.5rem, 3vw, 2.5rem);
+  height: var(--hairline);
+  background: var(--color-brass);
+  flex-shrink: 0;
 }
 
 #coast .section__index {
-  color: var(--color-ivory);
-  opacity: 0.62;
-}
-
-.coast__pause {
-  position: absolute;
   z-index: 3;
-  right: clamp(1rem, 4vw, 2.5rem);
-  bottom: clamp(1.25rem, 4vh, 2rem);
 }
 
-/* Reduced-motion: no transform on copy reveal, video never mounts (handled
-   in prologue.ts), gradient masks stay visible. */
+/* Reduced-motion: video element never mounts (prologue.ts gate); poster
+   stays as the only visual. */
 @media (prefers-reduced-motion: reduce) {
-  .coast__hero video {
+  .coast__frame video {
     display: none !important;
   }
 }

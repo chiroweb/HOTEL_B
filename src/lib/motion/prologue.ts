@@ -10,7 +10,6 @@
  */
 
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { getVideo } from '../asset';
 import { shouldReduce } from './reduced-motion';
@@ -29,12 +28,12 @@ export const prologueModule: MotionModule = {
       const monoLabel = el.querySelector<HTMLElement>('[data-reveal="mono"]');
       const displayHeading = el.querySelector<HTMLElement>('[data-reveal="display"]');
       const koLine = el.querySelector<HTMLElement>('[data-reveal="ko"]');
-      const pauseControlEl = el.querySelector<HTMLElement>('.coast__pause');
-      const heroLayer = el.querySelector<HTMLElement>('.coast__hero');
+      const pauseControlEl = el.querySelector<HTMLElement>('[data-reveal="pause"]');
+      const frame = el.querySelector<HTMLElement>('.coast__frame');
       const videoMount = el.querySelector<HTMLElement>('[data-video-mount]');
       const pauseButton = el.querySelector<HTMLButtonElement>('[data-pause-control]');
 
-      // ---- Copy reveal (always; reduced-motion drops the transform) ----
+      // ---- Reveal sequence (all elements; reduced-motion drops y drift) ----
       const reveal = gsap.timeline({ defaults: { ease: EASE } });
       const tweenOpts = reduce
         ? { y: 0, opacity: 0, duration: 0.5 }
@@ -43,30 +42,13 @@ export const prologueModule: MotionModule = {
         ? { y: 0, opacity: 0, duration: 0.6 }
         : { y: 24, opacity: 0, duration: 0.86 };
       if (monoLabel) reveal.from(monoLabel, tweenOpts, 0);
-      if (displayHeading) reveal.from(displayHeading, tweenOptsLg, 0.08);
-      if (koLine) reveal.from(koLine, tweenOpts, 0.32);
-      if (pauseControlEl) reveal.from(pauseControlEl, { opacity: 0, duration: 0.4 }, 0.6);
+      if (frame) reveal.from(frame, { y: reduce ? 0 : 18, opacity: 0, duration: 0.95 }, 0.04);
+      if (displayHeading) reveal.from(displayHeading, tweenOptsLg, 0.42);
+      if (koLine) reveal.from(koLine, tweenOpts, 0.62);
+      if (pauseControlEl) reveal.from(pauseControlEl, { opacity: 0, duration: 0.4 }, 0.78);
 
-      // ---- Scroll-driven horizon shift (skip under reduced-motion) ----
-      if (!reduce && heroLayer) {
-        gsap.set(heroLayer, { willChange: 'transform' });
-        const scrub = gsap.to(heroLayer, {
-          yPercent: -5,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 0.6,
-            onLeave: () => gsap.set(heroLayer, { willChange: 'auto' }),
-            onEnterBack: () => gsap.set(heroLayer, { willChange: 'transform' }),
-          },
-        });
-        // Refresh once layout settles.
-        ScrollTrigger.refresh(true);
-        // Keep reference alive — gsap.context auto-tracks.
-        void scrub;
-      }
+      // No scroll-driven scrub on the frame — it stays anchored as a
+      // contained editorial window, not a parallax surface.
 
       // ---- Video mount (LCP-protective: ONLY after window.load) ----
       if (!reduce && videoMount) {

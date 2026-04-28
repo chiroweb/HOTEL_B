@@ -17,12 +17,12 @@ const poster = getImage('PROLOGUE-01');
     랜드마크보다 먼저, 해안선이 있다.
   </span>
 
-  <div class="coast__hero" data-hero-layer>
+  <div class="coast__frame" data-hero-layer>
     <Picture
       src={poster.import}
       alt={poster.alt}
       widths={[480, 960, 1440, 1920]}
-      sizes={poster.sizes}
+      sizes="(max-width: 768px) 90vw, 60vw"
       formats={['avif', 'webp']}
       fallbackFormat="jpg"
       loading="eager"
@@ -33,7 +33,7 @@ const poster = getImage('PROLOGUE-01');
     <div data-video-mount aria-hidden="true"></div>
   </div>
 
-  <div class="coast__pause">
+  <div class="coast__pause" data-reveal="pause">
     <PauseControl controlsId="coast-hero-video" />
   </div>
 </SectionWrapper>
