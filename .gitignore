@@ -30,3 +30,6 @@ pnpm-debug.log*
 # tooling caches
 .omc/
 .claude/
+
+# placeholder backups (synthetic JPGs replaced by real photography)
+src/assets/placeholders/.synthetic-backup/

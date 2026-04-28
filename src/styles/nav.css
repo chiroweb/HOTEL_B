@@ -16,6 +16,25 @@
   backdrop-filter: saturate(140%) blur(6px);
   -webkit-backdrop-filter: saturate(140%) blur(6px);
   border-bottom: var(--hairline) solid var(--color-hair);
+  transform: translateY(0);
+  transition: transform 320ms var(--ease-editorial);
+  will-change: transform;
+}
+
+/* Scroll-direction auto-hide: bound by Nav.astro inline script. */
+.nav[data-state='hidden'] {
+  transform: translateY(-101%);
+}
+
+/* Keyboard focus inside the nav forces it back into view. */
+.nav:focus-within {
+  transform: translateY(0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav {
+    transition: none;
+  }
 }
 
 .nav__brand {

@@ -99,10 +99,10 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'PROLOGUE-01': {
     kind: 'image',
     import: prologuePoster,
-    alt: 'Songjeong coast at first light, small pavilion silhouette on the headland with waves washing onto the sand.',
+    alt: 'Songjeong coast at sunrise — quiet horizon, low rocks at left, gentle surf reflecting golden light on wet sand.',
     sizes: '100vw',
     widths: [480, 960, 1440, 1920],
-    tone: 'Sunrise over Songjeong, asymmetric framing with pavilion at left. Warm-desaturated grade.',
+    tone: 'Minimal sunrise over Songjeong. No people, asymmetric framing, warm-desaturated grade aligned with site cream/ivory base.',
   },
   'LANDMARK-01': {
     kind: 'image',
@@ -115,10 +115,10 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'LANDMARK-02': {
     kind: 'image',
     import: landmark02,
-    alt: 'Architectural facade detail with regular grid pattern, warm-cool reflection (placeholder).',
+    alt: 'Close-up of the WYNDHAM Songjeong facade — glass curtain wall, vertical fin pattern, and warm sunset reflections.',
     sizes: '(max-width: 768px) 100vw, 40vw',
     widths: [480, 720, 1200],
-    tone: 'Facade detail — material/glass/edge close-up. Macro feel.',
+    tone: 'Facade macro — glass panels with vertical fins, sunset reflections in the curtain wall. Architectural close-up.',
   },
   'FLOW-MORNING': {
     kind: 'image',
@@ -131,26 +131,26 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
   'FLOW-SURF': {
     kind: 'image',
     import: flowSurf,
-    alt: 'Songjeong coast at mid-day, warmer cream tones, restrained motion (placeholder).',
+    alt: 'Songjeong coast at mid-day — clear teal water, white sand, no figures.',
     sizes: '80vw',
     widths: [960, 1440, 1920],
-    tone: '13:40 — mid-day quiet. Warmer cream, surf line implied.',
+    tone: '13:40 — mid-day quiet. Clear teal-blue water, restrained sky, no people.',
   },
   'FLOW-WALK': {
     kind: 'image',
     import: flowWalk,
-    alt: 'Songjeong beach at late afternoon with surfers and the Busan coastline beyond the bay.',
+    alt: 'Two small figures walking along Songjeong shoreline at golden hour, sun low on horizon.',
     sizes: '80vw',
     widths: [960, 1440, 1920],
-    tone: '18:27 — golden-hour walking pace. Long shadows, restrained color, distant skyline as context.',
+    tone: '18:27 — golden-hour walk. Two distant silhouettes, long shadows on wet sand, restrained warmth.',
   },
   'FLOW-LIGHT': {
     kind: 'image',
     import: flowLight,
-    alt: 'Songjeong coast at blue hour, deep navy with warm light flecks (placeholder).',
+    alt: 'Songjeong coast at blue hour — deep navy sky, distant city lights, calm surf.',
     sizes: '80vw',
     widths: [960, 1440, 1920],
-    tone: '21:05 — blue hour. Deep navy with brass-light flecks. Lights on.',
+    tone: '21:05 — blue hour. Deep navy sea + sky, scatter of warm city lights at the headland edge.',
   },
   'WINDOW-01': {
     kind: 'image',
@@ -166,7 +166,7 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     alt: '',
     sizes: '(max-width: 768px) 60vw, 22vw',
     widths: [320, 480, 800],
-    tone: 'Warm still-life detail (cup/sill/fabric/light). Floating editorial frame.',
+    tone: 'Suite desk corner: ceramic mug, brass desk lamp, sheer curtain glowing with sunset light. Warm cinematic.',
   },
   'WINDOW-03': {
     kind: 'image',
@@ -174,15 +174,15 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     alt: '',
     sizes: '(max-width: 768px) 60vw, 22vw',
     widths: [320, 480, 800],
-    tone: 'Cooler atmospheric detail. Floating editorial frame, second.',
+    tone: 'Suite alt corner: full sheer curtain at left letting in cool day light, framed artwork at right. Cooler atmosphere.',
   },
   'SPACE-HERO': {
     kind: 'image',
     import: spaceHero,
-    alt: 'Architectural composition of layered structural elements with brass hairline rules (placeholder).',
+    alt: 'WYNDHAM Songjeong public lounge — double-height ceiling, full-height windows facing the bay at sunset, low warm furniture.',
     sizes: '(max-width: 768px) 100vw, 60vw',
     widths: [600, 900, 1200],
-    tone: 'Portrait architectural — warm structural rhythm with brass hairline accents. Crosses left to dominate during state 2.',
+    tone: 'Portrait architectural — high-ceiling lounge with sunset light through floor-to-ceiling windows. Brass + tan + warm wood.',
   },
 };
 
@@ -197,8 +197,8 @@ export const VIDEOS: Record<VideoSlotId, VideoSpec> = {
     ],
     poster: prologuePoster,
     posterAlt:
-      'Songjeong coastal horizon at quiet daylight, warm-desaturated tone (placeholder).',
-    duration: '6s loop',
-    tone: 'Slow ken-burns over coastal horizon. Loop-friendly, no cuts. Replace with real coastal footage.',
+      'Songjeong coast at sunrise — quiet horizon, low rocks at left, gentle surf reflecting golden light.',
+    duration: '30s sequence',
+    tone: 'Three-clip narrative: beach + city → hotel exterior + couple → suite view + headland. Sequenced so each clip ends near the next clip\'s opening framing.',
   },
 };

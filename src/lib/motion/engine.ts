@@ -39,7 +39,12 @@ interface EngineState {
   reduced: boolean;
 }
 
-const SNAP_TARGETS = ['coast', 'landmark', 'window', 'address'];
+// Only the true page anchors snap. Mid-page pinned sections (Landmark,
+// Day, Window, Space) are owned by ScrollTrigger pins; adding them as
+// snap targets makes the user "툭" into the pin entry while the pin's
+// own offset math is computing — feels grabby. Coast and Address get
+// magnetic landing because they ARE the start and end of the page.
+const SNAP_TARGETS = ['coast', 'address'];
 
 const state: EngineState = {
   lenis: null,
@@ -183,7 +188,11 @@ function startEngine(): void {
 
   ScrollTrigger.config({ ignoreMobileResize: true });
 
-  state.snap = createSnap(lenis, { ids: SNAP_TARGETS, lerp: 0.08 });
+  state.snap = createSnap(lenis, {
+    ids: SNAP_TARGETS,
+    duration: 1.4, // long, predictable landing — not a flick
+    velocityThreshold: 0.5, // wait until user has truly stopped
+  });
 
   state.running = true;
 }

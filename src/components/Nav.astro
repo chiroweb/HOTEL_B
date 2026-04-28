@@ -53,3 +53,38 @@ const sections: readonly NavSection[] = [
     Contact &rarr;
   </a>
 </nav>
+
+<script>
+  // Scroll-direction auto-hide. Hides on scroll-down, reveals on scroll-up
+  // and whenever the user is within TOP_BAND of the page top.
+  const nav = document.querySelector<HTMLElement>('.nav');
+  if (nav) {
+    const TOP_BAND = 80;
+    const TICK = 4; // jitter threshold
+    let lastY = window.scrollY;
+    let pending = false;
+
+    const apply = () => {
+      pending = false;
+      const y = window.scrollY;
+      const dy = y - lastY;
+
+      if (y < TOP_BAND) {
+        nav.dataset.state = '';
+      } else if (Math.abs(dy) > TICK) {
+        nav.dataset.state = dy > 0 ? 'hidden' : '';
+      }
+      lastY = y;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(apply);
+      },
+      { passive: true }
+    );
+  }
+</script>
