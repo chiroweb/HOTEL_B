@@ -5,8 +5,7 @@ import SectionWrapper from '../SectionWrapper.astro';
 import { getImage } from '../../lib/asset';
 import '../../styles/landmark.css';
 
-const tower = getImage('LANDMARK-01');
-const detail = getImage('LANDMARK-02');
+const facade = getImage('LANDMARK-02');
 ---
 
 <SectionWrapper id="landmark" index="02" title="VERTICAL">
@@ -17,41 +16,25 @@ const detail = getImage('LANDMARK-02');
     송정의 수평선 위에 세워지는 수직의 기준.
   </span>
 
-  <div class="landmark__stage">
-    <div class="landmark__tower">
-      <Picture
-        src={tower.import}
-        alt={tower.alt}
-        widths={[540, 720, 1080]}
-        sizes={tower.sizes}
-        formats={['avif', 'webp']}
-        fallbackFormat="jpg"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-    <div class="landmark__detail" aria-hidden="true">
-      <Picture
-        src={detail.import}
-        alt=""
-        widths={[480, 720, 1200]}
-        sizes={detail.sizes}
-        formats={['avif', 'webp']}
-        fallbackFormat="jpg"
-        loading="lazy"
-        decoding="async"
-      />
+  <div class="landmark__frame" data-frame>
+    <Picture
+      src={facade.import}
+      alt={facade.alt}
+      widths={[480, 720, 1200]}
+      sizes="(max-width: 768px) 90vw, 70vw"
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      loading="lazy"
+      decoding="async"
+      pictureAttributes={{ class: 'landmark__picture' }}
+    />
+    <div class="landmark__overlay" data-overlay aria-hidden="true">
+      {/* Annotations are inserted in Unit 2 */}
     </div>
   </div>
-
-  <figcaption class="landmark__caption">
-    <span class="label-mono">Facade · glass · light</span>
-  </figcaption>
 </SectionWrapper>
 
 <script>
-  // Lazy: ship the LANDMARK motion module only when the section approaches
-  // the viewport (rootMargin 50%). Keeps the initial bundle to engine + Coast.
   import { register } from '../../lib/motion/registry';
   import { currentMode } from '../../lib/motion/breakpoint';
 

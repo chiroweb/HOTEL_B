@@ -17,7 +17,6 @@
 import type { ImageMetadata } from 'astro';
 
 import prologuePoster from '../assets/placeholders/PROLOGUE-01-poster.jpg';
-import landmark01 from '../assets/placeholders/LANDMARK-01.jpg';
 import landmark02 from '../assets/placeholders/LANDMARK-02.jpg';
 import flowMorning from '../assets/placeholders/FLOW-MORNING.jpg';
 import flowSurf from '../assets/placeholders/FLOW-SURF.jpg';
@@ -34,7 +33,6 @@ import spaceHero from '../assets/placeholders/SPACE-HERO.jpg';
 
 export type ImageSlotId =
   | 'PROLOGUE-01'
-  | 'LANDMARK-01'
   | 'LANDMARK-02'
   | 'FLOW-MORNING'
   | 'FLOW-SURF'
@@ -48,6 +46,9 @@ export type ImageSlotId =
 //   'LANDMARK-03'
 // | `SPACE-${string}`
 // | 'EPILOGUE-01'
+// Removed (file retained on disk, not imported):
+//   'LANDMARK-01' — CG twin-tower render with WYNDHAM media-facade panel.
+//   See docs/plans/2026-04-28-001-refactor-landmark-architectural-annotation-plan.md.
 
 export type VideoSlotId = 'PROLOGUE-01';
 
@@ -103,14 +104,6 @@ export const IMAGES: Record<ImageSlotId, ImageSpec> = {
     sizes: '100vw',
     widths: [480, 960, 1440, 1920],
     tone: 'Minimal sunrise over Songjeong. No people, asymmetric framing, warm-desaturated grade aligned with site cream/ivory base.',
-  },
-  'LANDMARK-01': {
-    kind: 'image',
-    import: landmark01,
-    alt: 'Twin towers of the WYNDHAM Songjeong rising above the coastal promenade at dusk.',
-    sizes: '(max-width: 768px) 100vw, 60vw',
-    widths: [540, 720, 1080],
-    tone: 'Twin tower silhouette at dusk. INTERIM placeholder — preserves architectural massing; final photography should remove the lit media-facade panel and shoot at blue/dawn hour for a non-advertorial register.',
   },
   'LANDMARK-02': {
     kind: 'image',
