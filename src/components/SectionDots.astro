@@ -1,0 +1,103 @@
+---
+/**
+ * SectionDots — fixed right-side dot column, one per top-level section.
+ *
+ * - Mirrors the section list rendered by Nav.astro (kept in sync manually;
+ *   six entries, low churn).
+ * - Active state syncs to the nearest section by scrollY (rAF-throttled).
+ * - Click jumps to the section via native smooth scroll. Pairs cleanly with
+ *   section-snap.ts because snap-on-rest fires once smooth scroll comes to
+ *   a stop, landing the user exactly at section top.
+ * - Hidden on mobile (mobile users orient by scroll position, no need).
+ */
+
+import '../styles/section-dots.css';
+
+interface DotSection {
+  readonly id: string;
+  readonly label: string;
+}
+
+const sections: readonly DotSection[] = [
+  { id: 'coast', label: 'Coast' },
+  { id: 'landmark', label: 'Landmark' },
+  { id: 'day', label: 'Day' },
+  { id: 'window', label: 'Window' },
+  { id: 'space', label: 'Space' },
+  { id: 'address', label: 'Address' },
+];
+---
+
+<aside class="section-dots" aria-label="Section navigation">
+  {
+    sections.map((s, i) => (
+      <button
+        type="button"
+        class="section-dot"
+        data-section={s.id}
+        data-active={i === 0 ? 'true' : 'false'}
+        aria-label={`Jump to ${s.label}`}
+      >
+        <span class="section-dot__pip" aria-hidden="true" />
+        <span class="section-dot__label">{s.label}</span>
+      </button>
+    ))
+  }
+</aside>
+
+<script>
+  const dots = document.querySelectorAll<HTMLButtonElement>('.section-dot');
+  if (dots.length > 0) {
+    const sync = () => {
+      const y = window.scrollY + window.innerHeight / 3;
+      const sections = document.querySelectorAll<HTMLElement>('main > section[id]');
+      let activeId = '';
+      for (const s of sections) {
+        if (s.offsetTop <= y) activeId = s.id;
+        else break;
+      }
+      dots.forEach((d) => {
+        d.dataset.active = d.dataset.section === activeId ? 'true' : 'false';
+      });
+    };
+
+    let pending = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          pending = false;
+          sync();
+        });
+      },
+      { passive: true }
+    );
+    sync();
+
+    // Click → dispatch a custom event scroll-hijack listens for. When hijack
+    // is off (mobile / reduced-motion), the listener falls back to native
+    // smooth scroll.
+    dots.forEach((d) => {
+      d.addEventListener('click', () => {
+        const id = d.dataset.section;
+        if (!id) return;
+        window.dispatchEvent(
+          new CustomEvent('section-dots:jump', { detail: { id } })
+        );
+      });
+    });
+
+    // Native fallback for non-hijack mode (mobile / reduced-motion).
+    window.addEventListener('section-dots:jump', ((e: Event) => {
+      const detail = (e as CustomEvent<{ id: string }>).detail;
+      // If body has overflow:hidden (hijack active), don't scroll natively;
+      // scroll-hijack will handle it via its own listener.
+      if (document.body.style.overflow === 'hidden') return;
+      const target = document.getElementById(detail.id);
+      if (!target) return;
+      window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+    }) as EventListener);
+  }
+</script>

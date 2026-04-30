@@ -1,175 +1,100 @@
 /**
- * PROLOGUE motion module.
+ * PROLOGUE / COAST — hero section.
  *
- * Boots the hero choreography after window.load so the poster (LCP element)
- * paints first. Reduced-motion + Save-Data path skips the <video> mount and
- * the scroll-driven horizon shift entirely — copy fades only.
+ * Mounts a single <video> element inside the centered editorial frame
+ * (`[data-video-mount]`) after window.load — the static <Picture> poster
+ * remains the LCP candidate. The video element cycles through
+ * COAST-01 → COAST-02 → COAST-03 → COAST-01 (loop) by swapping its `src`
+ * on the `ended` event, so the three clips play in sequence in a single
+ * decoder pipeline (cheaper than three stacked elements).
  *
- * Cleanup: gsap.context.revert() kills tweens/triggers; manually-tracked
- * DOM listeners are flushed in the same call via a wrapped revert.
+ * Reduced-motion: video never mounts; the poster is the entire hero.
  */
-
-import { gsap } from 'gsap';
 
 import { getVideo } from '../asset';
 import { shouldReduce } from './reduced-motion';
-import type { MotionModule } from './types';
+import type { VideoSlotId } from '../../data/asset-manifest';
+import type { Mode } from './types';
 
-const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const SEQUENCE: readonly VideoSlotId[] = ['COAST-01', 'COAST-02', 'COAST-03'];
 
-export const prologueModule: MotionModule = {
-  id: 'prologue',
-  init(el, _mode) {
-    const cleanups: Array<() => void> = [];
+const cleanups = new WeakMap<HTMLElement, Array<() => void>>();
 
-    const ctx = gsap.context(() => {
-      const reduce = shouldReduce();
+export function setup(el: HTMLElement, _mode: Mode): void {
+  const reduce = shouldReduce();
+  const prior = cleanups.get(el);
+  if (prior) for (const fn of prior) try { fn(); } catch { /* ignore */ }
+  const list: Array<() => void> = [];
+  cleanups.set(el, list);
 
-      const monoLabel = el.querySelector<HTMLElement>('[data-reveal="mono"]');
-      const displayHeading = el.querySelector<HTMLElement>('[data-reveal="display"]');
-      const koLine = el.querySelector<HTMLElement>('[data-reveal="ko"]');
-      const pauseControlEl = el.querySelector<HTMLElement>('[data-reveal="pause"]');
-      const frame = el.querySelector<HTMLElement>('.coast__frame');
-      const videoMount = el.querySelector<HTMLElement>('[data-video-mount]');
-      const pauseButton = el.querySelector<HTMLButtonElement>('[data-pause-control]');
+  if (reduce) return;
+  const videoMount = el.querySelector<HTMLElement>('[data-video-mount]');
+  if (!videoMount) return;
 
-      // ---- Reveal sequence (all elements; reduced-motion drops y drift) ----
-      const reveal = gsap.timeline({ defaults: { ease: EASE } });
-      const tweenOpts = reduce
-        ? { y: 0, opacity: 0, duration: 0.5 }
-        : { y: 16, opacity: 0, duration: 0.62 };
-      const tweenOptsLg = reduce
-        ? { y: 0, opacity: 0, duration: 0.6 }
-        : { y: 24, opacity: 0, duration: 0.86 };
-      if (monoLabel) reveal.from(monoLabel, tweenOpts, 0);
-      if (frame) reveal.from(frame, { y: reduce ? 0 : 18, opacity: 0, duration: 0.95 }, 0.04);
-      if (displayHeading) reveal.from(displayHeading, tweenOptsLg, 0.42);
-      if (koLine) reveal.from(koLine, tweenOpts, 0.62);
-      if (pauseControlEl) reveal.from(pauseControlEl, { opacity: 0, duration: 0.4 }, 0.78);
+  const mount = () => mountSequence(videoMount, list);
+  if (document.readyState === 'complete') mount();
+  else {
+    const onLoad = () => mount();
+    window.addEventListener('load', onLoad, { once: true });
+    list.push(() => window.removeEventListener('load', onLoad));
+  }
+}
 
-      // No scroll-driven scrub on the frame — it stays anchored as a
-      // contained editorial window, not a parallax surface.
-
-      // ---- Video mount (LCP-protective: ONLY after window.load) ----
-      if (!reduce && videoMount) {
-        const mount = () => mountVideo(videoMount, pauseButton, cleanups);
-        if (document.readyState === 'complete') {
-          mount();
-        } else {
-          const onLoad = () => mount();
-          window.addEventListener('load', onLoad, { once: true });
-          cleanups.push(() => window.removeEventListener('load', onLoad));
-        }
-      }
-    }, el);
-
-    // Wrap revert so DOM listeners and dynamically-mounted nodes flush
-    // in the same teardown call as gsap-created animations.
-    const originalRevert = ctx.revert.bind(ctx);
-    ctx.revert = ((...args: Parameters<typeof originalRevert>) => {
-      while (cleanups.length) {
-        try {
-          cleanups.pop()?.();
-        } catch (err) {
-          console.error('[prologue] cleanup failed:', err);
-        }
-      }
-      return originalRevert(...args);
-    }) as typeof ctx.revert;
-
-    return ctx;
-  },
-};
-
-// ---------------------------------------------------------------------------
-// Video mount + WCAG 2.2.2 pause control wiring.
-// ---------------------------------------------------------------------------
-
-function mountVideo(
-  mount: HTMLElement,
-  pauseButton: HTMLButtonElement | null,
-  cleanups: Array<() => void>
-): void {
-  const spec = getVideo('PROLOGUE-01');
-
+function mountSequence(mount: HTMLElement, list: Array<() => void>): void {
   const video = document.createElement('video');
   video.muted = true;
-  video.loop = true;
   video.playsInline = true;
   video.autoplay = true;
-  video.preload = 'metadata';
+  video.preload = 'auto';
   video.setAttribute('aria-hidden', 'true');
   video.setAttribute('tabindex', '-1');
   video.id = 'coast-hero-video';
 
-  for (const src of spec.sources) {
-    const source = document.createElement('source');
-    source.src = src.src;
-    source.type = src.type;
-    video.appendChild(source);
-  }
+  let index = 0;
+
+  const loadAt = (i: number) => {
+    const spec = getVideo(SEQUENCE[i]);
+    // Single-source-per-clip is enough for these MP4s. Clear children
+    // first so a previous clip's <source> doesn't linger.
+    while (video.firstChild) video.removeChild(video.firstChild);
+    for (const src of spec.sources) {
+      const source = document.createElement('source');
+      source.src = src.src;
+      source.type = src.type;
+      video.appendChild(source);
+    }
+    video.load();
+  };
+
+  const advance = () => {
+    index = (index + 1) % SEQUENCE.length;
+    loadAt(index);
+    void video.play().catch(() => { /* autoplay blocked — leave on poster */ });
+  };
 
   const onPlaying = () => {
-    video.style.opacity = '1';
+    video.dataset.playing = 'true';
   };
-  video.addEventListener('playing', onPlaying, { once: true });
+  const onEnded = () => {
+    advance();
+  };
 
+  video.addEventListener('playing', onPlaying);
+  video.addEventListener('ended', onEnded);
+
+  loadAt(0);
   mount.appendChild(video);
-  void video.play().catch(() => {
-    /* autoplay rejected — poster remains; user can press PLAY (control still wires). */
-  });
+  void video.play().catch(() => { /* autoplay blocked — leave on poster */ });
 
-  cleanups.push(() => {
+  list.push(() => {
     video.removeEventListener('playing', onPlaying);
+    video.removeEventListener('ended', onEnded);
     video.pause();
-    video.removeAttribute('src');
     while (video.firstChild) video.removeChild(video.firstChild);
+    video.removeAttribute('src');
     video.load();
     video.remove();
   });
-
-  if (!pauseButton) return;
-
-  const pauseLabel = pauseButton.querySelector<HTMLElement>('[data-pause-label]');
-
-  const setUiState = (paused: boolean) => {
-    pauseButton.setAttribute('aria-pressed', String(paused));
-    pauseButton.setAttribute(
-      'aria-label',
-      paused ? 'Play hero video' : 'Pause hero video'
-    );
-    if (pauseLabel) pauseLabel.textContent = paused ? 'PLAY' : 'PAUSE';
-  };
-
-  const onClick = () => {
-    if (video.paused) {
-      void video.play();
-      setUiState(false);
-    } else {
-      video.pause();
-      setUiState(true);
-    }
-  };
-
-  const onVideoPlay = () => setUiState(false);
-  const onVideoPause = () => setUiState(true);
-
-  pauseButton.addEventListener('click', onClick);
-  video.addEventListener('play', onVideoPlay);
-  video.addEventListener('pause', onVideoPause);
-
-  setUiState(video.paused);
-
-  cleanups.push(() => {
-    pauseButton.removeEventListener('click', onClick);
-    video.removeEventListener('play', onVideoPlay);
-    video.removeEventListener('pause', onVideoPause);
-  });
 }
 
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    // Per-module HMR cleanup hook (registry handles the actual revert when
-    // the parent registers a fresh module on the next reload).
-  });
-}
+if (import.meta.hot) import.meta.hot.dispose(() => { /* no-op */ });

@@ -1,130 +1,225 @@
 /* ============================================================================
- * Nav — sticky editorial bar, hairline-bottom, brass accent strictly scoped
- * to the active-link 1px underline.
+ * NAV — corner icons + overlay menu.
+ *
+ *   • Logo (.nav-logo)         — fixed top-left, transparent background.
+ *   • Hamburger (.nav-toggle)  — fixed top-right, transparent background.
+ *   • Menu (.nav-menu)         — full-screen overlay with section list.
+ *
+ * No bar, no backdrop blur, no auto-hide on scroll. Two icons stay
+ * visible at all times; the menu opens on hamburger click.
  * ========================================================================== */
 
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: clamp(1rem, 4vw, 3rem);
-  padding: 0.875rem clamp(1rem, 4vw, 2.5rem);
-  background: color-mix(in srgb, var(--color-ivory) 92%, transparent);
-  backdrop-filter: saturate(140%) blur(6px);
-  -webkit-backdrop-filter: saturate(140%) blur(6px);
-  border-bottom: var(--hairline) solid var(--color-hair);
-  transform: translateY(0);
-  transition: transform 320ms var(--ease-editorial);
-  will-change: transform;
-}
+/* Logo --------------------------------------------------------------------- */
 
-/* Scroll-direction auto-hide: bound by Nav.astro inline script. */
-.nav[data-state='hidden'] {
-  transform: translateY(-101%);
-}
-
-/* Keyboard focus inside the nav forces it back into view. */
-.nav:focus-within {
-  transform: translateY(0) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nav {
-    transition: none;
-  }
-}
-
-.nav__brand {
+.nav-logo {
+  position: fixed;
+  z-index: 60;
+  top: clamp(0.875rem, 2vh, 1.5rem);
+  left: clamp(1rem, 3vw, 2rem);
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.625rem;
+  align-items: center;
   text-decoration: none;
-  color: var(--color-ink);
+  background: transparent;
+  pointer-events: auto;
+  /* Auto-contrast: mix-blend-mode: difference inverts the foreground
+     against whatever is painted behind. Pair with color: #fff so the
+     logo reads black over light and white over dark — no JS detection
+     needed. */
+  color: #fff;
+  mix-blend-mode: difference;
 }
 
-.nav__brand-mark {
+.nav-logo__mark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1rem, 1.4vw, 1.125rem);
-  letter-spacing: 0.06em;
+  font-size: clamp(0.95rem, 1.3vw, 1.125rem);
+  letter-spacing: 0.08em;
   line-height: 1;
   text-transform: uppercase;
+  color: inherit;
 }
 
-.nav__brand-meta {
-  display: none;
+/* Hamburger toggle --------------------------------------------------------- */
+
+.nav-toggle {
+  position: fixed;
+  z-index: 70;
+  top: clamp(0.875rem, 2vh, 1.5rem);
+  right: clamp(1rem, 3vw, 2rem);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  /* Same auto-contrast trick as the logo — bars rendered white and
+     differenced against the backdrop so dark sections invert to white,
+     light sections invert to black. */
+  mix-blend-mode: difference;
 }
 
-@media (min-width: 769px) {
-  .nav__brand-meta {
-    display: inline;
-    color: var(--color-ink);
-    opacity: 0.55;
-  }
+.nav-toggle__bar {
+  display: block;
+  width: 1.625rem;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition:
+    transform 280ms var(--ease-editorial),
+    opacity 200ms var(--ease-editorial),
+    background 200ms var(--ease-editorial);
 }
 
-.nav__sections {
-  display: none;
-  justify-self: center;
+/* Hamburger → X transform when menu is open. */
+.nav-toggle[data-open='true'] .nav-toggle__bar:nth-child(1) {
+  transform: translateY(0.5rem) rotate(45deg);
+}
+
+.nav-toggle[data-open='true'] .nav-toggle__bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle[data-open='true'] .nav-toggle__bar:nth-child(3) {
+  transform: translateY(-0.5rem) rotate(-45deg);
+}
+
+/* When the menu is open the X sits over the dark menu backdrop. The
+   button's mix-blend-mode: difference + #fff bars already produce a
+   bright X in that case (|dark − white| = light), so no override here. */
+
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 4px;
+}
+
+/* Overlay menu ------------------------------------------------------------- */
+
+.nav-menu {
+  position: fixed;
+  z-index: 65;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: clamp(2rem, 6vh, 4rem);
+  padding:
+    clamp(5rem, 12vh, 7rem)
+    clamp(2rem, 8vw, 6rem)
+    clamp(2rem, 6vh, 4rem);
+  background: color-mix(in srgb, var(--color-ink) 92%, transparent);
+  color: var(--color-ivory);
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 360ms var(--ease-editorial),
+    visibility 0s linear 360ms;
+  visibility: hidden;
+}
+
+.nav-menu[data-open='true'] {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 360ms var(--ease-editorial),
+    visibility 0s linear 0s;
+}
+
+.nav-menu__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: clamp(1rem, 2vw, 1.75rem);
+  display: grid;
+  gap: clamp(0.5rem, 1.2vh, 1rem);
+  align-content: center;
+  justify-items: start;
 }
 
-@media (min-width: 769px) {
-  .nav__sections {
-    display: flex;
-  }
+.nav-menu__item {
+  overflow: hidden;
 }
 
-.nav__link {
-  position: relative;
-  display: inline-block;
-  padding: 0.25rem 0;
+.nav-menu__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
   text-decoration: none;
-  color: var(--color-ink);
+  color: var(--color-ivory);
   opacity: 0.55;
-  transition: opacity 200ms var(--ease-editorial);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  /* Lift the link in/out of the dark backdrop on a slight slide. */
+  transform: translateY(20%);
+  transition:
+    opacity 240ms var(--ease-editorial),
+    color 240ms var(--ease-editorial),
+    transform 480ms var(--ease-editorial);
 }
 
-.nav__link:hover,
-.nav__link:focus-visible {
+.nav-menu[data-open='true'] .nav-menu__link {
+  transform: translateY(0);
+}
+
+/* Stagger the slide so the list cascades down on open. */
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(1) .nav-menu__link { transition-delay: 80ms; }
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(2) .nav-menu__link { transition-delay: 140ms; }
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(3) .nav-menu__link { transition-delay: 200ms; }
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(4) .nav-menu__link { transition-delay: 260ms; }
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(5) .nav-menu__link { transition-delay: 320ms; }
+.nav-menu[data-open='true'] .nav-menu__item:nth-child(6) .nav-menu__link { transition-delay: 380ms; }
+
+.nav-menu__link:hover,
+.nav-menu__link:focus-visible,
+.nav-menu__link[data-active='true'] {
   opacity: 1;
+  color: var(--color-brass);
+  outline: none;
 }
 
-.nav__link[data-active='true'] {
-  opacity: 1;
+.nav-menu__num {
+  font-family: var(--font-mono);
+  font-size: 0.625em;
+  letter-spacing: 0.18em;
+  opacity: 0.6;
 }
 
-.nav__link[data-active='true']::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: var(--hairline);
-  background: var(--color-brass);
-}
-
-.nav__contact {
+.nav-menu__contact {
   justify-self: end;
   text-decoration: none;
-  color: var(--color-ink);
+  color: var(--color-ivory);
   opacity: 0.7;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
   transition:
     opacity 200ms var(--ease-editorial),
     color 200ms var(--ease-editorial);
 }
 
-.nav__contact:hover,
-.nav__contact:focus-visible {
+.nav-menu__contact:hover,
+.nav-menu__contact:focus-visible {
   opacity: 1;
   color: var(--color-brass);
 }
+
+@media (max-width: 768px) {
+  .nav-menu {
+    padding: 5rem 1.5rem 2rem;
+  }
+  .nav-menu__link {
+    font-size: clamp(2rem, 9vw, 3.5rem);
+  }
+}
+
+/* Skip link ---------------------------------------------------------------- */
 
 .skip-link {
   position: absolute;
@@ -147,8 +242,8 @@
   transform: translateY(0);
 }
 
-/* Reduced-motion fallback: native CSS scroll-snap on <html data-snap-fallback="on">.
-   Lenis is destroyed in this mode (Lenis README forbids combining). */
+/* Reduced-motion fallback ------------------------------------------------- */
+
 html[data-snap-fallback='on'] {
   scroll-snap-type: y proximity;
   scroll-padding-top: 4rem;

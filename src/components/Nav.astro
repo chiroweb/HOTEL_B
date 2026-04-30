@@ -18,27 +18,42 @@ const sections: readonly NavSection[] = [
 
 <a class="skip-link label-mono" href="#main">Skip to content</a>
 
-<nav class="nav" aria-label="Primary">
-  <a class="nav__brand" href="#coast">
-    <span class="nav__brand-mark">WYNDHAM</span>
-    <span class="nav__brand-meta label-mono-sm" aria-hidden="true">
-      BUSAN / COASTAL LANDMARK
-    </span>
-  </a>
+<a class="nav-logo" href="#coast" aria-label="Back to coast — top of site">
+  <span class="nav-logo__mark">WYNDHAM</span>
+</a>
 
-  <ul class="nav__sections" id="nav-sections">
+<button
+  class="nav-toggle"
+  type="button"
+  aria-label="Open menu"
+  aria-expanded="false"
+  aria-controls="nav-menu"
+>
+  <span class="nav-toggle__bar" aria-hidden="true"></span>
+  <span class="nav-toggle__bar" aria-hidden="true"></span>
+  <span class="nav-toggle__bar" aria-hidden="true"></span>
+</button>
+
+<aside
+  class="nav-menu"
+  id="nav-menu"
+  aria-hidden="true"
+  aria-label="Section menu"
+>
+  <ul class="nav-menu__list">
     {
       sections.map((section, i) => (
-        <li>
+        <li class="nav-menu__item">
           <a
-            class="nav__link label-mono"
+            class="nav__link nav-menu__link"
             href={`#${section.id}`}
             data-section={section.id}
             data-active={i === 0 ? 'true' : 'false'}
           >
-            <span class="numeral">{String(i + 1).padStart(2, '0')}</span>
-            <span aria-hidden="true">&nbsp;/&nbsp;</span>
-            {section.label}
+            <span class="numeral nav-menu__num">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span class="nav-menu__label">{section.label}</span>
           </a>
         </li>
       ))
@@ -46,45 +61,51 @@ const sections: readonly NavSection[] = [
   </ul>
 
   <a
-    class="nav__contact label-mono"
+    class="nav-menu__contact label-mono"
     href="mailto:contact@example.com"
     aria-label="Open email to contact the hotel"
   >
     Contact &rarr;
   </a>
-</nav>
+</aside>
 
 <script>
-  // Scroll-direction auto-hide. Hides on scroll-down, reveals on scroll-up
-  // and whenever the user is within TOP_BAND of the page top.
-  const nav = document.querySelector<HTMLElement>('.nav');
-  if (nav) {
-    const TOP_BAND = 80;
-    const TICK = 4; // jitter threshold
-    let lastY = window.scrollY;
-    let pending = false;
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const menu = document.querySelector<HTMLElement>('.nav-menu');
+  const links = document.querySelectorAll<HTMLAnchorElement>('.nav-menu__link');
 
-    const apply = () => {
-      pending = false;
-      const y = window.scrollY;
-      const dy = y - lastY;
-
-      if (y < TOP_BAND) {
-        nav.dataset.state = '';
-      } else if (Math.abs(dy) > TICK) {
-        nav.dataset.state = dy > 0 ? 'hidden' : '';
-      }
-      lastY = y;
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      toggle.dataset.open = open ? 'true' : 'false';
+      menu.dataset.open = open ? 'true' : 'false';
+      menu.setAttribute('aria-hidden', String(!open));
     };
 
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (pending) return;
-        pending = true;
-        requestAnimationFrame(apply);
-      },
-      { passive: true }
-    );
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.dataset.open === 'true';
+      setOpen(!isOpen);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.dataset.open === 'true') setOpen(false);
+    });
+
+    // Each link closes the menu and routes through the existing
+    // section-dots:jump channel — scroll-hijack.ts already listens for
+    // that event, so the stack transition runs even with hijack active.
+    links.forEach((a) => {
+      a.addEventListener('click', (e) => {
+        const id = a.dataset.section;
+        if (id) {
+          e.preventDefault();
+          window.dispatchEvent(
+            new CustomEvent('section-dots:jump', { detail: { id } })
+          );
+        }
+        setOpen(false);
+      });
+    });
   }
 </script>

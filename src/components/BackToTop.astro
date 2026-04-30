@@ -1,0 +1,51 @@
+---
+/**
+ * BackToTop — fixed bottom-right button. Dispatches `section-dots:jump`
+ * with `id: 'coast'`, the same channel SectionDots already uses, so
+ * scroll-hijack picks it up via its existing onDotJump listener.
+ *
+ * Visible only after the user has advanced past the first stage; mirrors
+ * `[data-active]` from the coast dot to stay in sync with the hijack
+ * controller's notion of "current section."
+ */
+
+import '../styles/back-to-top.css';
+---
+
+<button
+  type="button"
+  class="back-to-top"
+  data-active="false"
+  aria-label="Back to top"
+>
+  <span class="back-to-top__caret" aria-hidden="true">&uarr;</span>
+  <span class="back-to-top__label">TOP</span>
+</button>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.back-to-top');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      window.dispatchEvent(
+        new CustomEvent('section-dots:jump', { detail: { id: 'coast' } })
+      );
+    });
+
+    // Mirror visibility off the coast dot's [data-active]: when coast is
+    // active (stage 0), hide the button; otherwise show it. scroll-hijack's
+    // syncDots() updates `.section-dot[data-section="coast"]` on every
+    // stage change, so we observe that single element.
+    const coastDot = document.querySelector<HTMLElement>(
+      '.section-dot[data-section="coast"]'
+    );
+    if (coastDot) {
+      const sync = () => {
+        const onCoast = coastDot.dataset.active === 'true';
+        btn.dataset.active = onCoast ? 'false' : 'true';
+      };
+      sync();
+      const mo = new MutationObserver(sync);
+      mo.observe(coastDot, { attributes: true, attributeFilter: ['data-active'] });
+    }
+  }
+</script>

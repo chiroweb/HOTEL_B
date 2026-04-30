@@ -1,112 +1,123 @@
 ---
-import { Picture } from 'astro:assets';
-
 import SectionWrapper from '../SectionWrapper.astro';
 import { getImage } from '../../lib/asset';
+import type { ImageSlotId } from '../../data/asset-manifest';
 import '../../styles/day.css';
 
 interface Frame {
-  slot: 'FLOW-MORNING' | 'FLOW-SURF' | 'FLOW-WALK' | 'FLOW-LIGHT';
+  id: string;
+  bgSlot: ImageSlotId;
+  floatSlotA: ImageSlotId;
+  floatSlotB: ImageSlotId;
   time: string;
   label: string;
+  /** Theme word — one Korean noun that anchors the life-quadrant motif. */
+  motif: string;
   copyKo: string;
+  copySub: string;
+  /** Diamond rotation — tr / tl / br / bl. Photo and copy sit on opposite corners. */
+  position: 'tr' | 'tl' | 'br' | 'bl';
 }
 
 const frames: Frame[] = [
   {
-    slot: 'FLOW-MORNING',
+    id: 'day-morning',
+    bgSlot: 'FLOW-MORNING',
+    floatSlotA: 'DAY-MORNING-A',
+    floatSlotB: 'DAY-MORNING-B',
     time: '06:12',
-    label: 'Morning',
-    copyKo: '하루는 바다에서 시작된다.',
+    label: 'Dawn',
+    motif: '품다',
+    copyKo: '꿈을 품고 깨어난다.',
+    copySub: '하루의 첫 빛이 객실 끝까지 닿는다. 바다는 아직 잠들어 있다.',
+    position: 'tr',
   },
   {
-    slot: 'FLOW-SURF',
+    id: 'day-day',
+    bgSlot: 'FLOW-SURF',
+    floatSlotA: 'DAY-DAY-A',
+    floatSlotB: 'DAY-DAY-B',
     time: '13:40',
-    label: 'Surf',
-    copyKo: '한낮은 잠시 멈추어 선다.',
+    label: 'Midday',
+    motif: '뛰다',
+    copyKo: '꿈을 향해 한낮을 달린다.',
+    copySub: '햇빛은 가장 곧고, 그림자는 가장 짧다. 시간은 잠시 멈추어 선다.',
+    position: 'tl',
   },
   {
-    slot: 'FLOW-WALK',
-    time: '18:27',
-    label: 'Walk',
-    copyKo: '오후의 빛은 길게 늘어진다.',
+    id: 'day-night',
+    bgSlot: 'FLOW-WALK',
+    floatSlotA: 'DAY-MIDNIGHT-A',
+    floatSlotB: 'DAY-MIDNIGHT-B',
+    time: '19:30',
+    label: 'Dusk',
+    motif: '고르다',
+    copyKo: '하루를 돌아보며 숨을 고른다.',
+    copySub: '하늘이 천천히 색을 바꾼다. 빛은 길게 늘어지고, 우리는 하루의 결을 만진다.',
+    position: 'br',
   },
   {
-    slot: 'FLOW-LIGHT',
-    time: '21:05',
-    label: 'Light',
-    copyKo: '밤은 해안에서 잠든다.',
+    id: 'day-midnight',
+    bgSlot: 'FLOW-LIGHT',
+    floatSlotA: 'DAY-NIGHT-A',
+    floatSlotB: 'DAY-NIGHT-B',
+    time: '23:50',
+    label: 'Night',
+    motif: '비추다',
+    copyKo: '꿈을 비추는 창 앞에 선다.',
+    copySub: '도시의 불빛이 객실의 적막에 닿는다. 내일의 꿈이 다시 밤을 채운다.',
+    position: 'bl',
   },
 ];
 
-const images = frames.map((f) => ({ frame: f, spec: getImage(f.slot) }));
+const items = frames.map((f) => ({
+  frame: f,
+  bgSpec: getImage(f.bgSlot),
+  floatSpecA: getImage(f.floatSlotA),
+  floatSpecB: getImage(f.floatSlotB),
+}));
 ---
 
-<SectionWrapper id="day" index="03" title="FLOW" pinned>
+<SectionWrapper id="day" index="03" title="FLOW">
   <span slot="display" class="display-md visually-hidden" data-reveal="display">
     Songjeong, A Day in Light
   </span>
 
-  <div class="day-track">
+  <div class="day-stack">
     {
-      images.map(({ frame, spec }) => (
-        <article class="day-frame" aria-label={`${frame.time} ${frame.label}`}>
-          <Picture
-            src={spec.import}
-            alt={spec.alt}
-            widths={[960, 1440, 1920]}
-            sizes={spec.sizes}
-            formats={['avif', 'webp']}
-            fallbackFormat="jpg"
-            loading="lazy"
-            decoding="async"
-          />
-          <span class="label-mono day-frame__caption numeral">
-            {frame.time} / {frame.label.toUpperCase()}
-          </span>
+      items.map(({ frame, bgSpec, floatSpecA, floatSpecB }) => (
+        <article
+          class="day-frame"
+          id={frame.id}
+          data-position={frame.position}
+          aria-label={`${frame.time} ${frame.label}`}
+        >
+          <div class="day-frame__bg" aria-hidden="true">
+            <img src={bgSpec.url} alt="" loading="lazy" decoding="async" />
+          </div>
+          <figure class="day-frame__float day-frame__float--a" aria-hidden="true">
+            <img src={floatSpecA.url} alt="" loading="lazy" decoding="async" />
+          </figure>
+          <figure class="day-frame__float day-frame__float--b" aria-hidden="true">
+            <img src={floatSpecB.url} alt="" loading="lazy" decoding="async" />
+          </figure>
+          <div class="day-frame__copy">
+            <span class="label-mono numeral day-frame__time">{frame.time}</span>
+            <span class="display-md day-frame__label">{frame.label}</span>
+            <span class="label-mono day-frame__motif" lang="ko">
+              {frame.motif}
+            </span>
+            <span class="display-ko-sm day-frame__copy-ko" lang="ko">
+              {frame.copyKo}
+            </span>
+            <span class="body-prose day-frame__copy-sub" lang="ko">
+              {frame.copySub}
+            </span>
+          </div>
         </article>
       ))
     }
   </div>
-
-  <aside class="day-meta">
-    <div class="day-time-stack">
-      {
-        frames.map((frame) => (
-          <span class="label-mono numeral" data-active="false">
-            {frame.time} / {frame.label.toUpperCase()}
-          </span>
-        ))
-      }
-    </div>
-    <p class="day-meta__copy display-ko-sm" lang="ko">
-      하루는 바다에서 시작되고, 해안에서 끝난다.
-    </p>
-  </aside>
-
-  <div class="day-progress" aria-hidden="true">
-    <span class="day-progress__fill"></span>
-  </div>
 </SectionWrapper>
 
-<script>
-  import { register } from '../../lib/motion/registry';
-  import { currentMode } from '../../lib/motion/breakpoint';
-
-  const el = document.getElementById('day');
-  if (el) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          io.disconnect();
-          void import('../../lib/motion/day').then(({ dayModule }) => {
-            register(dayModule, el as HTMLElement, currentMode());
-          });
-        }
-      },
-      { rootMargin: '50%' }
-    );
-    io.observe(el);
-  }
-</script>
+<!-- Motion is wired centrally by engine.ts via section-chain.ts (post 2026-04-28-003). -->

@@ -1,0 +1,69 @@
+/* ============================================================================
+ * BACK-TO-TOP — fixed bottom-right floating button.
+ *
+ * Hidden on stage 0 (the user is already at coast); reveals on every
+ * subsequent stage. data-active drives the show/hide; the click handler
+ * dispatches the same `section-dots:jump` event that scroll-hijack uses
+ * for direct stage jumps.
+ * ========================================================================== */
+
+.back-to-top {
+  position: fixed;
+  z-index: 50;
+  right: clamp(1.25rem, 3vw, 2rem);
+  bottom: clamp(1.25rem, 3vw, 2rem);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.85rem;
+  background: rgba(244, 239, 230, 0.92);
+  color: var(--color-ink);
+  border: var(--hairline) solid var(--color-hair);
+  border-radius: 999px;
+  cursor: pointer;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 320ms var(--ease-editorial),
+    transform 320ms var(--ease-editorial),
+    border-color 200ms var(--ease-editorial),
+    background 200ms var(--ease-editorial);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.back-to-top[data-active='true'] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  border-color: var(--color-brass);
+  background: var(--color-ivory);
+  outline: none;
+}
+
+.back-to-top__caret {
+  font-size: 0.875rem;
+  line-height: 1;
+  color: var(--color-brass);
+}
+
+.back-to-top__label {
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    right: 1rem;
+    bottom: 1rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.625rem;
+  }
+}

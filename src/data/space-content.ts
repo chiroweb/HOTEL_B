@@ -21,6 +21,10 @@ export interface SpaceCategory {
   readonly area: string;
   readonly note?: string;
   readonly imageId: ImageSlotId;
+  /** English display heading shown when this category is active. */
+  readonly display: string;
+  /** Korean display caption shown when this category is active. */
+  readonly displayKo: string;
 }
 
 export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
@@ -31,7 +35,9 @@ export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
     count: 312,
     area: '36–112 ㎡',
     note: 'East-southeast facing. Horizon-line floor plates.',
-    imageId: 'WINDOW-01',
+    imageId: 'AMENITY-ROOMS',
+    display: 'Rooms,\nAs Sanctuary.',
+    displayKo: '객실은 당신의 정박지가 된다.',
   },
   {
     id: 'pool',
@@ -40,7 +46,9 @@ export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
     count: 1,
     area: '420 ㎡',
     note: 'Indoor lap + outdoor reflection pool.',
-    imageId: 'SPACE-HERO',
+    imageId: 'AMENITY-POOL',
+    display: 'Water,\nAs Mirror.',
+    displayKo: '물은 풍경을 다시 비춘다.',
   },
   {
     id: 'dining',
@@ -49,7 +57,9 @@ export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
     count: 3,
     area: '720 ㎡',
     note: 'All-day · grill · bar.',
-    imageId: 'WINDOW-02',
+    imageId: 'AMENITY-DINING',
+    display: 'Table,\nAs Pause.',
+    displayKo: '식탁 위에서 하루가 잠시 멈춘다.',
   },
   {
     id: 'fitness',
@@ -57,7 +67,9 @@ export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
     labelKo: '피트니스',
     count: 1,
     area: '180 ㎡',
-    imageId: 'WINDOW-03',
+    imageId: 'AMENITY-FITNESS',
+    display: 'Body,\nAs Practice.',
+    displayKo: '몸의 리듬이 다시 정돈된다.',
   },
   {
     id: 'lounge',
@@ -66,5 +78,7 @@ export const SPACE_CATEGORIES: readonly SpaceCategory[] = [
     count: 1,
     area: '210 ㎡',
     imageId: 'SPACE-HERO',
+    display: 'Lounge,\nAs Horizon.',
+    displayKo: '머무름은 결국 수평선과 만난다.',
   },
 ];

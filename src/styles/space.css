@@ -34,17 +34,19 @@
   max-width: 32rem;
 }
 
-/* Copy column — give it real left/right air so it doesn't read jammed. */
+/* Copy column — anchored lower-left so the centered photo mask reads as
+   the focal point and the heading sits as a quiet caption beneath it. */
 .space__copy,
 #space .section__heading {
   position: absolute;
   z-index: 3;
   left: clamp(3rem, 8vw, 6rem);
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: min(32rem, 46vw);
+  bottom: clamp(2.5rem, 7vh, 5rem);
+  top: auto;
+  transform: none;
+  max-width: min(28rem, 42vw);
   display: grid;
-  gap: 0.875rem;
+  gap: 0.625rem;
   pointer-events: none;
   margin: 0;
 }
@@ -60,13 +62,14 @@
   margin: 0;
 }
 
-/* Image frame — stacked Pictures, hover swap via data-active. */
+/* Image frame — centered in the viewport so it reads as the focal piece;
+   the entrance animation slides it from the right into this resting spot. */
 .space__image {
   position: absolute;
   z-index: 1;
   top: 50%;
-  right: clamp(3rem, 8vw, 6rem);
-  transform: translateY(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: clamp(20rem, 38vw, 32rem);
   aspect-ratio: 3 / 4;
   overflow: hidden;
@@ -97,14 +100,16 @@
   opacity: 1;
 }
 
-/* Sub-category list — appears in state 2, hover-interactive. */
+/* Sub-category list — anchored lower-right to balance the lower-left
+   heading; the centered photo mask sits between them. */
 .space__cats {
   position: absolute;
   z-index: 2;
   right: clamp(3rem, 8vw, 6rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: clamp(18rem, 30vw, 24rem);
+  bottom: clamp(2.5rem, 7vh, 5rem);
+  top: auto;
+  transform: none;
+  width: clamp(16rem, 24vw, 22rem);
   display: grid;
   gap: 0.25rem;
   opacity: 0;

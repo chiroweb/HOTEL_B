@@ -1,0 +1,36 @@
+---
+/**
+ * Footer — slim editorial footer panel rendered inside the Address
+ * section. Hidden by default, slides up from below when the address
+ * controller advances to its second sub-stage. Three columns:
+ *   • Mark — WYNDHAM Songjeong
+ *   • Reach — contact + booking
+ *   • Meta — copyright + small print
+ *
+ * Not full-bleed: fits within ~38vh so the address poster remains
+ * partially visible above it.
+ */
+---
+
+<footer class="site-footer" data-revealed="false" aria-label="Site footer">
+  <div class="site-footer__row">
+    <div class="site-footer__col site-footer__col--mark">
+      <span class="site-footer__eyebrow">WYNDHAM</span>
+      <span class="site-footer__line">Songjeong &middot; Busan</span>
+    </div>
+
+    <div class="site-footer__col site-footer__col--reach">
+      <span class="site-footer__eyebrow">Reach</span>
+      <a class="site-footer__line" href="mailto:contact@example.com">contact@example.com</a>
+      <a class="site-footer__line" href="tel:+82-51-000-0000">+82&nbsp;51&nbsp;000&nbsp;0000</a>
+    </div>
+
+    <div class="site-footer__col site-footer__col--meta">
+      <span class="site-footer__eyebrow">Notice</span>
+      <span class="site-footer__line">&copy; WYNDHAM Songjeong &mdash; Editorial preview</span>
+      <span class="site-footer__line site-footer__line--mute">All photography, copy, and layout subject to change.</span>
+    </div>
+  </div>
+
+  <div class="site-footer__hairline" aria-hidden="true"></div>
+</footer>

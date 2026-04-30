@@ -1,9 +1,21 @@
 /* ============================================================================
- * ADDRESS — final imprint. No scroll motion within the section. Display
- * type fades in once, then nothing. Closing the browser tab on Address
- * should feel right; the site doesn't beg the user to act.
+ * ADDRESS — final imprint, editorial cover-page composition.
+ *
+ * Layout (desktop):
+ *   • Top:    section index sits inside the SectionWrapper, top-left.
+ *   • Body:   two columns — left = display + Korean lede,
+ *             right = plate (eyebrow + place + coords + framed photo).
+ *   • Right rail (vertical): brass dot + "Address" mark.
+ *   • Bottom strip: EST. 2026 — monogram — 06/06.
+ *
+ * Background: warm beige to match the reference. The footer panel is
+ * still pinned to the bottom and reveals on the second hijack sub-stage
+ * (handled by address.ts + the .site-footer block at the end of this
+ * file).
  * ========================================================================== */
 
+/* Background matches the rest of the site (ivory) so the editorial
+   register is consistent across sections. */
 #address {
   background: var(--color-ivory);
   color: var(--color-ink);
@@ -23,99 +35,427 @@
   max-width: 32rem;
 }
 
+/* ----------------------------------------------------------------------- */
+/* Layout shell                                                            */
+/* ----------------------------------------------------------------------- */
+
 .address__layout {
   position: absolute;
   inset: 0;
   display: grid;
-  place-items: center;
-  padding: clamp(4rem, 12vh, 8rem) clamp(1.5rem, 6vw, 4rem);
+  grid-template-rows: 1fr auto auto;
+  align-items: stretch;
+  padding:
+    clamp(4.5rem, 10vh, 7rem)
+    clamp(2.5rem, 6vw, 5.5rem)
+    clamp(1.5rem, 4vh, 2.5rem);
+  gap: clamp(1.25rem, 3vh, 2rem);
 }
 
-.address__poster {
+.address__inner {
   display: grid;
-  gap: clamp(1.5rem, 4vh, 2.5rem);
-  text-align: center;
-  max-width: min(48rem, 92vw);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  width: 100%;
+  max-width: 1280px;
+  justify-self: center;
+}
+
+/* ----------------------------------------------------------------------- */
+/* Left column — display + lede                                            */
+/* ----------------------------------------------------------------------- */
+
+.address__copy {
+  display: grid;
+  gap: clamp(1.25rem, 3vh, 2rem);
+  align-content: center;
 }
 
 .address__display {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(2.5rem, 7.5vw, 6rem);
-  line-height: 1.0;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 5.5vw, 4.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
   color: var(--color-ink);
 }
 
 .address__display span {
   display: block;
-  opacity: 0; /* reveal manages stagger */
+  /* No CSS opacity:0 — JS sets the initial hidden state via gsap.set
+     when motion is allowed, and animates to 1. If JS never runs, the
+     line stays visible instead of permanently invisible. */
 }
 
-.address__display span:not(:first-child) {
-  margin-top: clamp(0.25rem, 0.5vh, 0.5rem);
-}
-
-.address__metadata {
-  display: grid;
-  gap: 0.5rem;
-  justify-items: center;
+.address__display-ko {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+  line-height: 1.4;
   color: var(--color-ink);
-  opacity: 0; /* faded in last */
 }
 
-.address__metadata-mark {
+.address__lede {
+  margin: 0;
+  font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  line-height: 1.7;
+  color: var(--color-ink);
+  opacity: 0.7;
+  max-width: 22rem;
+}
+
+/* ----------------------------------------------------------------------- */
+/* Right column — plate                                                    */
+/* ----------------------------------------------------------------------- */
+
+.address__plate {
+  display: grid;
+  gap: clamp(0.75rem, 1.6vh, 1.25rem);
+  align-content: start;
+  padding: clamp(0.5rem, 1vw, 1rem) 0;
+}
+
+.address__plate-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: clamp(0.625rem, 1.5vw, 1.25rem);
+}
+
+.address__plate-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  opacity: 0.8;
+}
+
+.address__plate-rule {
+  height: var(--hairline, 1px);
+  background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+}
+
+.address__plate-body {
+  display: grid;
+  gap: clamp(0.875rem, 2vh, 1.4rem);
+}
+
+.address__plate-place {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.address__plate-mute {
+  opacity: 0.6;
+}
+
+.address__coords {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem clamp(1rem, 3vw, 2rem);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.address__coords-row {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.address__coords-label {
+  margin: 0;
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  opacity: 0.55;
+}
+
+.address__coords-val {
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+.address__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-bone);
+  border: var(--hairline) solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+}
+
+.address__frame picture,
+.address__frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.address__frame img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ----------------------------------------------------------------------- */
+/* Right rail — vertical brand mark                                        */
+/* ----------------------------------------------------------------------- */
+
+.address__rail {
+  position: absolute;
+  top: 50%;
+  right: clamp(0.875rem, 2vw, 1.5rem);
+  transform: translateY(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 0.625rem;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.address__rail-mark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.95rem, 1.4vw, 1.125rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-ink);
+  opacity: 0.55;
 }
 
-.address__metadata-meta {
+.address__rail-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-brass);
+  background: transparent;
+}
+
+.address__rail-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  opacity: 0.7;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Hairline + bottom strip                                                 */
+/* ----------------------------------------------------------------------- */
+
+.address__rule {
+  width: 100%;
+  height: var(--hairline, 1px);
+  background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+}
+
+.address__strip {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  opacity: 0.65;
+  color: var(--color-ink);
+  opacity: 0.78;
 }
 
-.address__hairline {
-  width: clamp(2.5rem, 5vw, 4rem);
-  height: var(--hairline);
-  background: var(--color-brass);
-  margin: 0.25rem 0;
-  opacity: 0;
+.address__strip-item--left {
+  justify-self: start;
 }
 
-.address__contact {
-  position: absolute;
-  z-index: 4;
-  right: clamp(1.5rem, 5vw, 4rem);
-  bottom: clamp(1.5rem, 5vh, 3rem);
+.address__strip-item--center {
+  justify-self: center;
+}
+
+.address__strip-item--right {
+  justify-self: end;
+  letter-spacing: 0.08em;
+}
+
+.address__monogram {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0;
   text-transform: uppercase;
-  opacity: 0.7;
-  transition:
-    opacity 240ms var(--ease-editorial),
-    color 240ms var(--ease-editorial);
+  color: var(--color-ink);
 }
 
-.address__contact:hover,
-.address__contact:focus-visible {
-  opacity: 1;
-  color: var(--color-brass);
-}
+/* Hide the legacy contact link & poster bits (no longer rendered). The
+   footer block below stays, since address.ts still toggles it. */
 
+/* Hide the global bottom-right index label on address — the new bottom
+   strip below already carries the "06" page-numbering, and the TOP
+   button also sits in this corner. Three labels in one corner reads as
+   noise; one is enough. */
 #address .section__index {
-  z-index: 3;
+  display: none;
+}
+
+/* Reserve room for the fixed TOP button (.back-to-top, ~3rem wide) so
+   the strip's right-edge "06 — 06" never sits underneath it. */
+.address__strip-item--right {
+  padding-right: clamp(3.5rem, 6vw, 5rem);
+}
+
+@media (max-width: 960px) {
+  .address__layout {
+    padding:
+      clamp(4.5rem, 10vh, 6rem)
+      clamp(1.25rem, 5vw, 3rem)
+      clamp(1.25rem, 4vh, 2rem);
+    gap: 1rem;
+  }
+  .address__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .address__display {
+    font-size: clamp(2rem, 8vw, 3.25rem);
+  }
+  .address__rail {
+    display: none;
+  }
+}
+
+/* ============================================================================
+ * FOOTER — slim panel pinned to the bottom of the address section, hidden
+ * by default. address.ts advances the address controller to subIndex 1
+ * which lifts the inner layout up and slides this panel into view.
+ * ========================================================================== */
+
+.site-footer {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(14rem, 32vh, 20rem);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  padding: clamp(1.5rem, 4vh, 2.5rem) clamp(1.5rem, 6vw, 4rem) clamp(1.25rem, 3vh, 2rem);
+  background: color-mix(in srgb, var(--color-ivory) 90%, var(--color-ink) 10%);
+  color: var(--color-ink);
+  pointer-events: none;
+  transform: translateY(100%);
+  transition: transform 0.9s var(--ease-editorial);
+}
+
+.site-footer[data-revealed='true'] {
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.site-footer__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+  width: 100%;
+}
+
+.site-footer__col {
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.site-footer__col--reach {
+  justify-self: center;
+  text-align: center;
+}
+
+.site-footer__col--meta {
+  justify-self: end;
+  text-align: right;
+}
+
+.site-footer__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-brass);
+  margin-bottom: 0.15rem;
+}
+
+.site-footer__line {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+a.site-footer__line {
+  transition: color 200ms var(--ease-editorial);
+}
+
+a.site-footer__line:hover,
+a.site-footer__line:focus-visible {
+  color: var(--color-brass);
+  outline: none;
+}
+
+.site-footer__line--mute {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  text-transform: none;
+}
+
+.site-footer__hairline {
+  width: 100%;
+  height: var(--hairline);
+  background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  margin-top: clamp(1rem, 2vh, 1.5rem);
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    height: auto;
+    min-height: 16rem;
+    padding: 1.5rem 1.25rem;
+  }
+  .site-footer__row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .site-footer__col,
+  .site-footer__col--reach,
+  .site-footer__col--meta {
+    justify-self: start;
+    text-align: left;
+  }
 }

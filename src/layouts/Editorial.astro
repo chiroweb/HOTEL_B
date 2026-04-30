@@ -2,6 +2,8 @@
 import '../styles/global.css';
 
 import Nav from '../components/Nav.astro';
+import SectionDots from '../components/SectionDots.astro';
+import BackToTop from '../components/BackToTop.astro';
 
 interface Props {
   title?: string;
@@ -61,6 +63,8 @@ const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://wyndham.example/').to
   <body>
     <h1 class="visually-hidden">WYNDHAM &mdash; Songjeong Coastal Landmark</h1>
     <Nav />
+    <SectionDots />
+    <BackToTop />
     <main id="main">
       <slot />
     </main>

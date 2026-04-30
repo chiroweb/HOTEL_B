@@ -16,13 +16,11 @@
   overflow: hidden; /* prevents horizontal-track sections from leaking sideways */
   background: var(--color-ivory);
   color: var(--color-ink);
-  scroll-snap-align: start;
 }
 
-.section.is-pinned {
-  scroll-snap-align: none;
-  scroll-snap-stop: normal;
-}
+/* Legacy `.section.is-pinned` opt-out is no longer meaningful — pin
+ * grammar was retired with the section-snap refactor. The class is
+ * kept on Day/Space sections in markup but has no effect here. */
 
 .section__index {
   position: absolute;

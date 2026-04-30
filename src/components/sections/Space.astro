@@ -1,18 +1,25 @@
 ---
-import { Picture } from 'astro:assets';
-
 import SectionWrapper from '../SectionWrapper.astro';
 import { getImage } from '../../lib/asset';
 import { SPACE_CATEGORIES } from '../../data/space-content';
 import '../../styles/space.css';
+
+/** Render display heading text — newline → <br /> for multi-line copy. */
+const initial = SPACE_CATEGORIES[0];
+const initialDisplayLines = initial.display.split('\n');
 ---
 
 <SectionWrapper id="space" index="05" title="THE SPACE" pinned>
-  <span slot="display" class="display-lg" data-reveal="display">
-    Rooms Are Not<br />the Story.<br />The Horizon Is.
+  <span slot="display" class="display-lg" data-reveal="display" data-space-display>
+    {initialDisplayLines.map((line, i) => (
+      <>
+        {i > 0 && <br />}
+        {line}
+      </>
+    ))}
   </span>
-  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
-    공간은 풍경의 연장으로 설계되었다.
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko" data-space-display-ko>
+    {initial.displayKo}
   </span>
 
   <div class="space__image">
@@ -20,20 +27,14 @@ import '../../styles/space.css';
       SPACE_CATEGORIES.map((cat, i) => {
         const img = getImage(cat.imageId);
         return (
-          <Picture
-            src={img.import}
+          <img
+            class="space__cat-image"
+            data-cat-image={cat.id}
+            data-active={i === 0 ? 'true' : 'false'}
+            src={img.url}
             alt={img.alt}
-            widths={[600, 900, 1200]}
-            sizes={img.sizes}
-            formats={['avif', 'webp']}
-            fallbackFormat="jpg"
             loading="lazy"
             decoding="async"
-            pictureAttributes={{
-              class: 'space__cat-image',
-              'data-cat-image': cat.id,
-              'data-active': i === 0 ? 'true' : 'false',
-            }}
           />
         );
       })
@@ -64,9 +65,6 @@ import '../../styles/space.css';
 </SectionWrapper>
 
 <script>
-  import { register } from '../../lib/motion/registry';
-  import { currentMode } from '../../lib/motion/breakpoint';
-
   const el = document.getElementById('space');
   if (!el) {
     /* nothing to wire */
@@ -95,19 +93,6 @@ import '../../styles/space.css';
       c.addEventListener('focus', enter);
     });
 
-    // Lazy motion module register.
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          io.disconnect();
-          void import('../../lib/motion/space').then(({ spaceModule }) => {
-            register(spaceModule, el as HTMLElement, currentMode());
-          });
-        }
-      },
-      { rootMargin: '50%' }
-    );
-    io.observe(el);
+    // Motion is wired centrally by engine.ts via section-chain.ts (post 2026-04-28-003).
   }
 </script>

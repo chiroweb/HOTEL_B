@@ -1,13 +1,12 @@
 ---
-import { Picture } from 'astro:assets';
-
 import SectionWrapper from '../SectionWrapper.astro';
-import { getImage } from '../../lib/asset';
+import { getImage, getVideo } from '../../lib/asset';
 import '../../styles/window.css';
 
-const main = getImage('WINDOW-01');
-const floatA = getImage('WINDOW-02');
-const floatB = getImage('WINDOW-03');
+const bgVideo = getVideo('WINDOW-BG');
+const floatA = getImage('ROOM-DETAIL-3');
+const floatB = getImage('ROOM-DETAIL-4');
+const floatC = getImage('AMENITY-ROOMS');
 ---
 
 <SectionWrapper id="window" index="04" title="THE WINDOW">
@@ -19,65 +18,34 @@ const floatB = getImage('WINDOW-03');
   </span>
 
   <div class="window__main">
-    <Picture
-      src={main.import}
-      alt={main.alt}
-      widths={[960, 1440, 1920]}
-      sizes={main.sizes}
-      formats={['avif', 'webp']}
-      fallbackFormat="jpg"
-      loading="lazy"
-      decoding="async"
-    />
+    <video
+      class="window__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      {bgVideo.sources.map((src) => <source src={src.src} type={src.type} />)}
+    </video>
   </div>
 
   <figure class="window__float window__float--a">
-    <Picture
-      src={floatA.import}
-      alt=""
-      widths={[320, 480, 800]}
-      sizes={floatA.sizes}
-      formats={['avif', 'webp']}
-      fallbackFormat="jpg"
-      loading="lazy"
-      decoding="async"
-    />
-    <figcaption class="label-mono">Cup &middot; sill &middot; light</figcaption>
+    <img src={floatA.url} alt={floatA.alt} loading="lazy" decoding="async" />
+    <figcaption class="label-mono">Suite &middot; detail</figcaption>
   </figure>
 
   <figure class="window__float window__float--b">
-    <Picture
-      src={floatB.import}
-      alt=""
-      widths={[320, 480, 800]}
-      sizes={floatB.sizes}
-      formats={['avif', 'webp']}
-      fallbackFormat="jpg"
-      loading="lazy"
-      decoding="async"
-    />
-    <figcaption class="label-mono">Late &middot; quiet &middot; haze</figcaption>
+    <img src={floatB.url} alt={floatB.alt} loading="lazy" decoding="async" />
+    <figcaption class="label-mono">Quiet &middot; corners</figcaption>
+  </figure>
+
+  <figure class="window__float window__float--c">
+    <img src={floatC.url} alt={floatC.alt} loading="lazy" decoding="async" />
+    <figcaption class="label-mono">Room &middot; details</figcaption>
   </figure>
 </SectionWrapper>
 
-<script>
-  import { register } from '../../lib/motion/registry';
-  import { currentMode } from '../../lib/motion/breakpoint';
-
-  const el = document.getElementById('window');
-  if (el) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          io.disconnect();
-          void import('../../lib/motion/window').then(({ windowModule }) => {
-            register(windowModule, el as HTMLElement, currentMode());
-          });
-        }
-      },
-      { rootMargin: '50%' }
-    );
-    io.observe(el);
-  }
-</script>
+<!-- Motion is wired centrally by engine.ts via section-chain.ts. -->

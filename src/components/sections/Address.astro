@@ -1,6 +1,10 @@
 ---
 import SectionWrapper from '../SectionWrapper.astro';
+import Footer from '../Footer.astro';
+import { getImage } from '../../lib/asset';
 import '../../styles/address.css';
+
+const hero = getImage('LANDMARK-FACADE');
 ---
 
 <SectionWrapper id="address" index="06" title="ADDRESS">
@@ -9,45 +13,72 @@ import '../../styles/address.css';
   </span>
 
   <div class="address__layout">
-    <div class="address__poster">
-      <h3 class="address__display">
-        <span>Songjeong</span>
-        <span>Will Remember</span>
-        <span>This Address</span>
-      </h3>
+    <div class="address__inner">
+      <div class="address__copy">
+        <h3 class="address__display">
+          <span>Songjeong</span>
+          <span>Will Remember</span>
+          <span>This Address</span>
+        </h3>
 
-      <div class="address__hairline" aria-hidden="true"></div>
+        <p class="address__display-ko" lang="ko">
+          마침내,<br />머무를 곳이 선명해진다.
+        </p>
 
-      <div class="address__metadata">
-        <span class="address__metadata-mark">WYNDHAM</span>
-        <span class="address__metadata-meta">Busan &middot; Coastal Landmark</span>
+        <p class="address__lede" lang="ko">
+          도착의 이름이 곧 머무름의 이유가 된다, 순간이다.<br />
+          송정의 해안이 어떤 인영처럼 가만히 자리를 맡아둔다.
+        </p>
       </div>
+
+      <div class="address__plate">
+        <div class="address__plate-head">
+          <span class="address__plate-eyebrow">Address</span>
+          <div class="address__plate-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="address__plate-body">
+          <p class="address__plate-place">
+            <span>Songjeong Beach</span>
+            <span class="address__plate-mute">Busan, Korea</span>
+          </p>
+
+          <dl class="address__coords">
+            <div class="address__coords-row">
+              <dt class="address__coords-label">Lat</dt>
+              <dd class="address__coords-val numeral">35&deg; 10&prime; 41&Prime; N</dd>
+            </div>
+            <div class="address__coords-row">
+              <dt class="address__coords-label">Lng</dt>
+              <dd class="address__coords-val numeral">129&deg; 12&prime; 02&Prime; E</dd>
+            </div>
+          </dl>
+
+          <div class="address__frame">
+            <img src={hero.url} alt={hero.alt} loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="address__rail" aria-hidden="true">
+      <span class="address__rail-mark">W</span>
+      <span class="address__rail-dot"></span>
+      <span class="address__rail-label">Address</span>
+    </div>
+
+    <div class="address__rule" aria-hidden="true"></div>
+
+    <div class="address__strip">
+      <span class="address__strip-item address__strip-item--left">EST. 2026</span>
+      <span class="address__strip-item address__strip-item--center" aria-hidden="true">
+        <span class="address__monogram">W</span>
+      </span>
+      <span class="address__strip-item address__strip-item--right numeral">06 &mdash; 06</span>
     </div>
   </div>
 
-  <a class="address__contact" href="mailto:contact@example.com" aria-label="Open email to contact the hotel">
-    Contact &rarr;
-  </a>
+  <Footer />
 </SectionWrapper>
 
-<script>
-  import { register } from '../../lib/motion/registry';
-  import { currentMode } from '../../lib/motion/breakpoint';
-
-  const el = document.getElementById('address');
-  if (el) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          io.disconnect();
-          void import('../../lib/motion/address').then(({ addressModule }) => {
-            register(addressModule, el as HTMLElement, currentMode());
-          });
-        }
-      },
-      { rootMargin: '50%' }
-    );
-    io.observe(el);
-  }
-</script>
+<!-- Motion is wired centrally by engine.ts via section-chain.ts. -->

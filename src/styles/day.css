@@ -1,158 +1,297 @@
 /* ============================================================================
- * DAY — pinned horizontal time film. The site's main "wow" moment.
+ * DAY — horizontal track of four time-of-day frames.
  *
- * Critical rule (plan §Unit 9): pin the OUTER section, animate the INNER
- * track. Never animate the pinned element itself.
+ * Desktop: section pins at viewport top while the inner track translates
+ * horizontally as the user vertical-scrolls. The classic horizontal-section
+ * pattern: page scroll continues to feel natural; inside DAY, vertical
+ * scroll moves the 4 frames sideways past the viewport.
  *
- * Layer discipline: will-change only on the active track. Section uses
- * contain: layout paint while inactive.
- *
- * Carousel rejection: no dots, no arrows, no autoplay timer, no slide UI.
- * The frame is "edited film", not "browsable items" (R2).
+ * Mobile + reduced-motion: collapse to a normal vertical stack with no
+ * pin or horizontal motion.
  * ========================================================================== */
 
 #day {
   position: relative;
   background: var(--color-ivory);
   color: var(--color-ink);
-  contain: layout paint;
+  height: 100svh;
+  min-height: 100svh;
+  width: 100%;
   overflow: hidden;
+  display: block;
 }
 
-#day.is-stub {
-  display: grid;
+#day .section__index {
+  z-index: 5;
 }
 
-#day.is-stub .section__heading {
-  align-self: center;
-  justify-self: center;
-  padding: 0 clamp(2rem, 6vw, 6rem);
-  text-align: center;
-  max-width: 32rem;
-}
-
-.day-track {
-  position: relative;
-  z-index: 0;
+.day-stack {
   display: flex;
-  align-items: stretch;
-  height: 100%;
-  width: max-content;
-  gap: var(--track-gutter);
-  padding: clamp(5rem, 11vh, 7rem) clamp(2rem, 6vw, 6rem);
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 400vw; /* 4 frames × 100vw */
+  height: 100svh;
+  will-change: transform;
 }
 
 .day-frame {
   position: relative;
-  flex: 0 0 80vw;
-  max-width: 80vw;
-  aspect-ratio: 21 / 9;
-  height: auto;
-  background: var(--color-bone);
-  border: var(--hairline) solid var(--color-hair);
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100svh;
+  min-height: 100svh;
+  background: var(--color-ivory);
   overflow: hidden;
+  border-right: var(--hairline) solid color-mix(in srgb, var(--color-hair) 40%, transparent);
 }
 
-.day-frame img {
+.day-frame:last-child {
+  border-right: 0;
+}
+
+/* Background — full-bleed FLOW-* photo behind the frame. */
+.day-frame__bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-bone);
+  z-index: 0;
+}
+
+.day-frame__bg picture,
+.day-frame__bg img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
 }
 
-.day-frame__caption {
-  position: absolute;
-  z-index: 2;
-  bottom: clamp(1rem, 2.5vh, 1.5rem);
-  left: clamp(1rem, 2.5vw, 1.75rem);
-  color: var(--color-ivory);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+.day-frame__bg img {
+  object-fit: cover;
+  object-position: center;
 }
 
-.day-meta {
+.day-frame__bg::after {
+  /* Light scrim so copy stays legible on bright backgrounds. */
+  content: '';
   position: absolute;
-  z-index: 3;
-  bottom: clamp(3.5rem, 8vh, 5rem);
-  left: clamp(2rem, 6vw, 6rem);
-  display: grid;
-  gap: 0.75rem;
-  max-width: min(28rem, 60vw);
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(19, 18, 17, 0.18) 0%,
+    rgba(19, 18, 17, 0.05) 45%,
+    rgba(19, 18, 17, 0.28) 100%
+  );
   pointer-events: none;
 }
 
-.day-time-stack {
-  position: relative;
-  display: grid;
-  height: 1.25rem;
-}
-
-.day-time-stack > .label-mono {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transition: opacity var(--duration-time-label) var(--ease-editorial);
-}
-
-.day-time-stack > .label-mono[data-active='true'] {
-  opacity: 1;
-}
-
-.day-meta__copy {
-  color: var(--color-ink);
-  opacity: 0.72;
-  margin: 0;
-}
-
-.day-progress {
+/* Float — small editorial mask floating over the bg.
+   Sized by width only; height tracks the photo's natural aspect ratio so
+   the building/subject is never cropped. */
+.day-frame__float {
   position: absolute;
-  z-index: 3;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--progress-hairline-h);
-  background: var(--color-hair);
+  margin: 0;
+  background: var(--color-bone);
+  border: var(--hairline) solid color-mix(in srgb, var(--color-ivory) 70%, transparent);
+  box-shadow: 0 8px 28px rgba(19, 18, 17, 0.22);
+  z-index: 2;
 }
 
-.day-progress__fill {
+.day-frame__float picture {
   display: block;
-  height: 100%;
-  width: 0%;
-  background: var(--color-brass);
-  transform-origin: left;
 }
 
-#day .section__index {
-  z-index: 4;
+.day-frame__float img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-/* Mobile + reduced-motion: stack frames vertically with their captions.
-   No pin, no horizontal pan on touch. */
+.day-frame__float--a {
+  width: clamp(16rem, 22vw, 22rem);
+}
+
+.day-frame__float--b {
+  width: clamp(15rem, 20vw, 20rem);
+}
+
+/* Copy block — sits over the bg photo, so it stays ivory with a soft shadow. */
+.day-frame__copy {
+  position: absolute;
+  display: grid;
+  gap: 0.5rem;
+  max-width: min(28rem, 32vw);
+  pointer-events: none;
+  z-index: 3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.day-frame__time {
+  color: var(--color-ivory);
+  opacity: 0.78;
+}
+
+.day-frame__label {
+  margin: 0;
+  color: var(--color-ivory);
+  letter-spacing: -0.01em;
+}
+
+.day-frame__copy-ko {
+  margin: 0;
+  color: var(--color-ivory);
+  opacity: 0.92;
+}
+
+.day-frame__motif {
+  color: var(--color-ivory);
+  opacity: 0.65;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding-top: 0.25rem;
+  border-top: var(--hairline) solid color-mix(in srgb, var(--color-ivory) 40%, transparent);
+  width: max-content;
+  max-width: 100%;
+}
+
+.day-frame__copy-sub {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-ivory) 88%, transparent);
+  font-size: clamp(0.85rem, 0.95vw, 1rem);
+  line-height: 1.65;
+  padding-top: 0.3rem;
+}
+
+/* Diamond rotation — float pair on one diagonal, copy on the opposite corner.
+   The bg is full-bleed (inset: 0) so it needs no per-position rules. */
+
+/* tr: floats top-right cluster, copy bottom-left. */
+.day-frame[data-position='tr'] .day-frame__float--a {
+  top: clamp(5rem, 12svh, 7rem);
+  right: clamp(3rem, 7vw, 5rem);
+}
+.day-frame[data-position='tr'] .day-frame__float--b {
+  top: clamp(20svh, 28svh, 32svh);
+  right: clamp(22vw, 26vw, 28vw);
+}
+.day-frame[data-position='tr'] .day-frame__copy {
+  bottom: clamp(4rem, 12svh, 6rem);
+  left: clamp(3rem, 8vw, 6rem);
+}
+
+/* tl: floats top-left cluster, copy bottom-right. */
+.day-frame[data-position='tl'] .day-frame__float--a {
+  top: clamp(5rem, 12svh, 7rem);
+  left: clamp(3rem, 7vw, 5rem);
+}
+.day-frame[data-position='tl'] .day-frame__float--b {
+  top: clamp(20svh, 28svh, 32svh);
+  left: clamp(22vw, 26vw, 28vw);
+}
+.day-frame[data-position='tl'] .day-frame__copy {
+  bottom: clamp(4rem, 12svh, 6rem);
+  right: clamp(3rem, 8vw, 6rem);
+  text-align: right;
+  justify-items: end;
+}
+
+/* br: floats bottom-right cluster, copy top-left. */
+.day-frame[data-position='br'] .day-frame__float--a {
+  bottom: clamp(5rem, 12svh, 7rem);
+  right: clamp(3rem, 7vw, 5rem);
+}
+.day-frame[data-position='br'] .day-frame__float--b {
+  bottom: clamp(20svh, 28svh, 32svh);
+  right: clamp(22vw, 26vw, 28vw);
+}
+.day-frame[data-position='br'] .day-frame__copy {
+  top: clamp(4rem, 12svh, 6rem);
+  left: clamp(3rem, 8vw, 6rem);
+}
+
+/* bl: floats bottom-left cluster, copy top-right. */
+.day-frame[data-position='bl'] .day-frame__float--a {
+  bottom: clamp(5rem, 12svh, 7rem);
+  left: clamp(3rem, 7vw, 5rem);
+}
+.day-frame[data-position='bl'] .day-frame__float--b {
+  bottom: clamp(20svh, 28svh, 32svh);
+  left: clamp(22vw, 26vw, 28vw);
+}
+.day-frame[data-position='bl'] .day-frame__copy {
+  top: clamp(4rem, 12svh, 6rem);
+  right: clamp(3rem, 8vw, 6rem);
+  text-align: right;
+  justify-items: end;
+}
+
+/* Mobile + reduced-motion: collapse to vertical normal flow. */
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
   #day {
     height: auto;
     min-height: auto;
+    overflow: visible;
   }
-  .day-track {
+  .day-stack {
     flex-direction: column;
     width: 100%;
-    gap: 1rem;
-    padding: 5rem clamp(1rem, 5vw, 3rem) 4rem;
+    height: auto;
   }
   .day-frame {
     flex: 0 0 auto;
-    max-width: none;
     width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 3rem clamp(1rem, 5vw, 2.5rem) 3rem;
+    border-right: 0;
+    border-bottom: var(--hairline) solid color-mix(in srgb, var(--color-hair) 40%, transparent);
   }
-  .day-meta {
+  .day-frame:last-child {
+    border-bottom: 0;
+  }
+  .day-frame__bg,
+  .day-frame__float,
+  .day-frame__copy {
     position: static;
-    margin: 0 clamp(1rem, 5vw, 3rem) 1.5rem;
+    inset: auto;
+    transform: none;
+    width: 100%;
     max-width: none;
+    aspect-ratio: auto;
+    text-align: left;
+    justify-items: start;
   }
-  .day-time-stack > .label-mono[data-reduced-show='true'] {
-    opacity: 1;
+  .day-frame__bg {
+    aspect-ratio: 16 / 9;
+    max-height: 60vh;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
   }
-  .day-progress {
+  .day-frame__bg::after {
     display: none;
+  }
+  .day-frame__bg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .day-frame__float {
+    width: 70%;
+    margin: 0 0 1.5rem auto;
+  }
+  .day-frame__float--b {
+    width: 55%;
+  }
+  .day-frame__copy {
+    text-shadow: none;
+  }
+  .day-frame__time,
+  .day-frame__label,
+  .day-frame__copy-ko {
+    color: var(--color-ink);
   }
 }

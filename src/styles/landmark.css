@@ -1,21 +1,288 @@
 /* ============================================================================
- * LANDMARK — Section 2 cleared.
+ * LANDMARK — Section 2.
  *
- * Architectural-annotation refactor was rolled back at the user's request;
- * the section is intentionally blank pending a fresh design direction.
- * Wrapper styles only.
+ * Pinned full-screen narrative. Background photo holds; three "stages" of
+ * copy + supplemental images cross-fade as the user vertically scrolls
+ * through the pinned segment. Motion module (landmark.ts) drives the
+ * scrub timeline + label-snap.
+ *
+ * Mobile + reduced-motion: section collapses to a vertical column where
+ * each stage flows naturally, no pin.
  * ========================================================================== */
 
 #landmark {
-  background: var(--color-ivory);
-  color: var(--color-ink);
-  min-height: 100svh;
   position: relative;
-  display: grid;
-  align-content: center;
-  justify-items: center;
+  height: 100svh;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: #0a0a0c;
+  color: var(--color-ivory);
+  contain: layout paint;
 }
 
 #landmark .section__index {
+  z-index: 6;
+  color: var(--color-ivory);
+  opacity: 0.7;
+}
+
+#landmark .section__heading {
+  position: absolute;
+  z-index: 5;
+  left: clamp(1.5rem, 5vw, 4rem);
+  top: clamp(2rem, 6svh, 3.5rem);
+  display: grid;
+  gap: 0.5rem;
+  pointer-events: none;
+  color: var(--color-ivory);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  max-width: min(34rem, 70vw);
+}
+
+#landmark .section__heading .display-lg,
+#landmark .section__heading .display-ko-md {
+  margin: 0;
+  color: var(--color-ivory);
+}
+
+#landmark .section__heading .display-ko-md {
+  opacity: 0.78;
+}
+
+/* Background — full-bleed atmospheric backdrop with darkening scrim. */
+.landmark__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.landmark__bg picture,
+.landmark__bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.landmark__bg img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.landmark__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 8, 10, 0.45) 0%,
+    rgba(8, 8, 10, 0.18) 30%,
+    rgba(8, 8, 10, 0.45) 70%,
+    rgba(8, 8, 10, 0.7) 100%
+  );
+  pointer-events: none;
+}
+
+/* Stages — overlapped, motion module toggles opacity between them. */
+.landmark__stages {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.landmark__stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landmark__stage[data-stage='1'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Copy block — anchored left half, vertically centered. */
+.landmark__copy {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 4rem);
+  top: 50%;
+  transform: translateY(-44%);
+  width: min(38rem, 46vw);
+  display: grid;
+  gap: 1rem;
   z-index: 3;
+}
+
+.landmark__eyebrow {
+  color: var(--color-ivory);
+  opacity: 0.7;
+  letter-spacing: 0.18em;
+}
+
+.landmark__heading {
+  margin: 0;
+  color: var(--color-ivory);
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.landmark__lede,
+.landmark__body {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.05vw, 1.1rem);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--color-ivory) 92%, transparent);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.landmark__lede strong {
+  font-weight: 500;
+  color: var(--color-ivory);
+  letter-spacing: 0.01em;
+}
+
+/* Floating arts — positioned per stage on the right half. */
+.landmark__art {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  background: rgba(8, 8, 10, 0.4);
+  border: var(--hairline) solid color-mix(in srgb, var(--color-ivory) 25%, transparent);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  z-index: 3;
+}
+
+.landmark__art picture {
+  display: block;
+}
+
+.landmark__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Stage 1 floating arts. */
+.landmark__art--a1 {
+  top: clamp(8rem, 18svh, 11rem);
+  right: clamp(3rem, 7vw, 5rem);
+  width: clamp(16rem, 24vw, 24rem);
+}
+
+.landmark__art--c1 {
+  bottom: clamp(4rem, 10svh, 6rem);
+  right: clamp(18vw, 22vw, 26vw);
+  width: clamp(11rem, 16vw, 16rem);
+}
+
+/* Stage 2 floating arts. */
+.landmark__art--facade {
+  top: clamp(7rem, 14svh, 9rem);
+  right: clamp(3rem, 7vw, 5rem);
+  width: clamp(18rem, 28vw, 28rem);
+}
+
+.landmark__art--c2 {
+  bottom: clamp(5rem, 12svh, 7rem);
+  right: clamp(3rem, 7vw, 5rem);
+  width: clamp(13rem, 18vw, 18rem);
+}
+
+.landmark__art--b1 {
+  bottom: clamp(8rem, 18svh, 11rem);
+  right: clamp(22vw, 28vw, 32vw);
+  width: clamp(11rem, 15vw, 15rem);
+}
+
+/* Stage 3 floating arts. */
+.landmark__art--c3 {
+  top: clamp(6rem, 14svh, 8rem);
+  right: clamp(3rem, 7vw, 5rem);
+  width: clamp(13rem, 19vw, 19rem);
+}
+
+.landmark__art--c4 {
+  top: clamp(20svh, 30svh, 32svh);
+  right: clamp(20vw, 26vw, 28vw);
+  width: clamp(11rem, 15vw, 15rem);
+}
+
+.landmark__art--a2 {
+  bottom: clamp(4rem, 10svh, 6rem);
+  right: clamp(4rem, 8vw, 6rem);
+  width: clamp(15rem, 22vw, 22rem);
+}
+
+/* Stage progress dots — bottom center. */
+.landmark__progress {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: clamp(1.5rem, 4svh, 2.5rem);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.6rem;
+  pointer-events: none;
+}
+
+.landmark__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-ivory) 35%, transparent);
+  transition: background-color 0.35s ease, transform 0.35s ease;
+}
+
+.landmark__dot.is-active {
+  background: var(--color-ivory);
+  transform: scale(1.4);
+}
+
+/* Mobile + reduced-motion: collapse to natural vertical flow. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  #landmark {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+    padding: 4rem 0 5rem;
+  }
+  .landmark__bg {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+  }
+  .landmark__stages {
+    position: relative;
+    inset: auto;
+  }
+  .landmark__stage {
+    position: relative;
+    inset: auto;
+    opacity: 1 !important;
+    pointer-events: auto;
+    padding: 3rem clamp(1rem, 5vw, 2.5rem);
+    border-bottom: var(--hairline) solid color-mix(in srgb, var(--color-ivory) 15%, transparent);
+  }
+  .landmark__stage:last-of-type {
+    border-bottom: 0;
+  }
+  .landmark__copy {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+  }
+  .landmark__art {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+  .landmark__progress {
+    display: none;
+  }
 }

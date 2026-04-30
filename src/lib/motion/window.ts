@@ -1,152 +1,63 @@
 /**
- * WINDOW motion module — quietest section.
- *
- * Main interior image holds still (or scales max 1.02 over full pin
- * progress; vestibular cap per WCAG 2.3.3). Two floating frames drift
- * Y 16–32px and shift opacity scrub-driven across the pin. If the
- * motion is noticed explicitly, it's too loud.
- *
- * Layer discipline: will-change only on floating frames during pin.
- * Main image uses contain: paint until scrub starts (no early GPU
- * layer promotion).
+ * WINDOW — entrance reveal via IntersectionObserver.
  */
 
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { shouldReduce } from './reduced-motion';
-import type { MotionModule } from './types';
+import type { Mode } from './types';
 
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const SLIDE = 120;
 
-export const windowModule: MotionModule = {
-  id: 'window',
-  init(el, mode) {
-    return gsap.context(() => {
-      const reduce = shouldReduce();
+export function setup(el: HTMLElement, _mode: Mode): void {
+  const reduce = shouldReduce();
+  const monoLabel = el.querySelector<HTMLElement>('[data-reveal="mono"]');
+  const display = el.querySelector<HTMLElement>('[data-reveal="display"]');
+  const ko = el.querySelector<HTMLElement>('[data-reveal="ko"]');
+  const main = el.querySelector<HTMLElement>('.window__main');
+  const floatA = el.querySelector<HTMLElement>('.window__float--a');
+  const floatB = el.querySelector<HTMLElement>('.window__float--b');
 
-      const monoLabel = el.querySelector<HTMLElement>('[data-reveal="mono"]');
-      const display = el.querySelector<HTMLElement>('[data-reveal="display"]');
-      const ko = el.querySelector<HTMLElement>('[data-reveal="ko"]');
-      const main = el.querySelector<HTMLImageElement>('.window__main img');
-      const floatA = el.querySelector<HTMLElement>('.window__float--a');
-      const floatB = el.querySelector<HTMLElement>('.window__float--b');
+  if (!reduce) {
+    if (main) gsap.set(main, { x: SLIDE, scale: 1.04, opacity: 0 });
+    if (monoLabel) gsap.set(monoLabel, { y: 16, opacity: 0 });
+    if (display) gsap.set(display, { y: 22, opacity: 0 });
+    if (ko) gsap.set(ko, { y: 16, opacity: 0 });
+    if (floatA) gsap.set(floatA, { y: 32, opacity: 0 });
+    if (floatB) gsap.set(floatB, { y: 32, opacity: 0 });
+  }
 
-      // Copy reveal once on enter.
-      // No ScrollTrigger: section module is lazy-imported via
-      // IntersectionObserver(rootMargin:50%); a 'top 70%' trigger added here
-      // would miss its window on fast scroll, leaving from()-state stuck.
-      const enter = gsap.timeline({ defaults: { ease: EASE } });
-      const dy = reduce ? 0 : 16;
-      if (monoLabel) enter.from(monoLabel, { y: dy, opacity: 0, duration: 0.6 }, 0);
-      if (display) enter.from(display, { y: reduce ? 0 : 22, opacity: 0, duration: 0.84 }, 0.08);
-      if (ko) enter.from(ko, { y: dy, opacity: 0, duration: 0.7 }, 0.32);
+  let played = false;
+  const play = () => {
+    if (played) return;
+    played = true;
+    const tl = gsap.timeline({ defaults: { ease: EASE } });
+    if (reduce) {
+      tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0);
+      return;
+    }
+    if (main) tl.to(main, { x: 0, scale: 1, opacity: 1, duration: 1.1 }, 0);
+    if (monoLabel) tl.to(monoLabel, { y: 0, opacity: 1, duration: 0.6 }, 0.15);
+    if (display) tl.to(display, { y: 0, opacity: 1, duration: 0.84 }, 0.25);
+    if (ko) tl.to(ko, { y: 0, opacity: 1, duration: 0.7 }, 0.4);
+    if (floatA) tl.to(floatA, { y: 0, opacity: 1, duration: 0.86 }, 0.45);
+    if (floatB) tl.to(floatB, { y: 0, opacity: 1, duration: 0.86 }, 0.6);
+  };
 
-      if (reduce) return;
-
-      // Mobile: skip pin; floating frames stack and reveal sequentially.
-      if (mode === 'mobile') {
-        for (const f of [floatA, floatB]) {
-          if (!f) continue;
-          gsap.from(f, {
-            y: 24,
-            opacity: 0,
-            duration: 0.86,
-            ease: EASE,
-            scrollTrigger: { trigger: f, start: 'top 88%', once: true },
-          });
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.intersectionRatio > 0.3) {
+          io.disconnect();
+          play();
+          return;
         }
-        return;
       }
-
-      gsap.to(el, {
-        scrollTrigger: {
-          trigger: el,
-          pin: true,
-          scrub: 1,
-          start: 'top top',
-          end: '+=150%', // matches --pin-window
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          pinSpacing: true,
-          onEnter: () => activate(el, [floatA, floatB]),
-          onEnterBack: () => activate(el, [floatA, floatB]),
-          onLeave: () => deactivate(el, [floatA, floatB]),
-          onLeaveBack: () => deactivate(el, [floatA, floatB]),
-        },
-      });
-
-      // Main image — extremely subtle scale (1.02 cap).
-      if (main) {
-        gsap.fromTo(
-          main,
-          { scale: 1 },
-          {
-            scale: 1.02,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top top',
-              end: '+=150%',
-              scrub: 1,
-            },
-          }
-        );
-      }
-
-      // Floating frames — asymmetric Y drift + opacity.
-      if (floatA) {
-        gsap.fromTo(
-          floatA,
-          { y: 24, opacity: 0.0 },
-          {
-            y: -16,
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 80%',
-              end: 'bottom 60%',
-              scrub: 1,
-            },
-          }
-        );
-      }
-      if (floatB) {
-        gsap.fromTo(
-          floatB,
-          { y: -8, opacity: 0.0 },
-          {
-            y: 22,
-            opacity: 0.92,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 60%',
-              end: 'bottom 50%',
-              scrub: 1,
-            },
-          }
-        );
-      }
-
-      ScrollTrigger.refresh(true);
-    }, el);
-  },
-};
-
-function activate(el: HTMLElement, floats: Array<HTMLElement | null>): void {
-  el.style.contain = '';
-  for (const f of floats) if (f) f.style.willChange = 'transform, opacity';
+    },
+    { threshold: [0, 0.15, 0.3, 0.5] }
+  );
+  io.observe(el);
 }
 
-function deactivate(el: HTMLElement, floats: Array<HTMLElement | null>): void {
-  el.style.contain = 'layout paint';
-  for (const f of floats) if (f) f.style.willChange = '';
-}
-
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    /* registry handles teardown */
-  });
-}
+if (import.meta.hot) import.meta.hot.dispose(() => {});

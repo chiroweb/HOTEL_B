@@ -15,6 +15,7 @@ html {
   background: var(--color-ivory);
   color: var(--color-ink);
   text-rendering: optimizeLegibility;
+  scrollbar-gutter: stable;
 }
 
 body {

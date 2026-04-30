@@ -1,8 +1,113 @@
 ---
 import SectionWrapper from '../SectionWrapper.astro';
+import { getImage } from '../../lib/asset';
 import '../../styles/landmark.css';
+
+const bg = getImage('LANDMARK-BG');
+const facade = getImage('LANDMARK-FACADE');
+const a1 = getImage('LANDMARK-A1');
+const a2 = getImage('LANDMARK-A2');
+const b1 = getImage('LANDMARK-B1');
+const c1 = getImage('LANDMARK-C1');
+const c2 = getImage('LANDMARK-C2');
+const c3 = getImage('LANDMARK-C3');
+const c4 = getImage('LANDMARK-C4');
 ---
 
-<SectionWrapper id="landmark" index="02" title="VERTICAL">
-  {/* Section 2 cleared — re-design pending. */}
+<SectionWrapper id="landmark" index="02" title="LANDMARK">
+  <span slot="display" class="display-lg" data-reveal="display">
+    Songjeong,<br />Reframed
+  </span>
+  <span slot="display-ko" class="display-ko-md" lang="ko" data-reveal="ko">
+    송정의 새 지평선이 된다.
+  </span>
+
+  <div class="landmark__bg" aria-hidden="true">
+    <img src={bg.url} alt="" loading="eager" decoding="async" />
+  </div>
+
+  <div class="landmark__stages">
+    {/* Stage 1 — Opening: who we are. */}
+    <article class="landmark__stage" data-stage="1">
+      <div class="landmark__copy">
+        <span class="label-mono landmark__eyebrow">01 — Arrival</span>
+        <h3 class="display-md landmark__heading">A New Address on the Eastern Coast</h3>
+        <p class="body-prose landmark__lede" lang="ko">
+          송정의 풍경에는 오래도록 한 자리가 비어 있었다. 바다와 도심을 잇는 그 자리에,
+          <strong>WYNDHAM Global Hotel</strong>은 단순한 객실의 합이 아닌, 한 채의 풍경으로
+          서기 위해 지어졌다.
+        </p>
+        <p class="body-prose landmark__body" lang="ko">
+          송정해수욕장의 동쪽 끝, 해운대와 기장 사이의 경계 위에서 호텔은 두 도시의
+          시간을 동시에 거둔다. 객실의 모든 창은 같은 바다를 다른 각도로 마주하고,
+          로비의 모든 동선은 결국 수평선을 향해 열린다.
+        </p>
+      </div>
+      <figure class="landmark__art landmark__art--a1" aria-hidden="true">
+        <img src={a1.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="landmark__art landmark__art--c1" aria-hidden="true">
+        <img src={c1.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+    </article>
+
+    {/* Stage 2 — Architecture: media facade as the city's new signal. */}
+    <article class="landmark__stage" data-stage="2">
+      <div class="landmark__copy">
+        <span class="label-mono landmark__eyebrow">02 — Form</span>
+        <h3 class="display-md landmark__heading">The Facade Is Not Skin. It Is Signal.</h3>
+        <p class="body-prose landmark__body" lang="ko">
+          외피 전면이 미디어 파사드로 설계되어 있다. 낮 동안에는 송정의 빛을 그대로 받아
+          질감을 흩고, 일몰 이후에는 도시의 새로운 신호가 된다. 단순히 비추는 표면이 아니라,
+          송정과 호텔이 매일 주고받는 조용한 대화의 매체.
+        </p>
+        <p class="body-prose landmark__body" lang="ko">
+          높이 약 144m, 두 개의 타워는 바다를 향해 살짝 비틀려 서 있고, 그 사이로 흐르는
+          빛의 패턴은 시간대에 따라 달라진다. 정해진 광고가 아니라, 그날의 기상과 바다가
+          함께 쓰는 화면.
+        </p>
+      </div>
+      <figure class="landmark__art landmark__art--facade" aria-hidden="true">
+        <img src={facade.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="landmark__art landmark__art--c2" aria-hidden="true">
+        <img src={c2.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="landmark__art landmark__art--b1" aria-hidden="true">
+        <img src={b1.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+    </article>
+
+    {/* Stage 3 — Identity: closing statement. */}
+    <article class="landmark__stage" data-stage="3">
+      <div class="landmark__copy">
+        <span class="label-mono landmark__eyebrow">03 — Becoming</span>
+        <h3 class="display-md landmark__heading">A Landmark, By Standing Quietly.</h3>
+        <p class="body-prose landmark__body" lang="ko">
+          이곳에 머무는 일은 풍경을 잠시 빌리는 일이 아니다. 송정의 한 부분이 되는 일이다.
+          어떤 하루는 일출의 빛이 객실 끝까지 들이고, 어떤 하루는 미디어 파사드의 잔광이
+          오래 남는다. 다른 풍경이 아니라, 같은 자리를 다르게 사는 시간.
+        </p>
+        <p class="body-prose landmark__body" lang="ko">
+          호텔이 송정의 랜드마크가 되는 방식은 크게 외치지 않는 쪽이다.
+          매일 같은 자리에서, 매일 다른 빛으로 — 그저 거기에 있다.
+        </p>
+      </div>
+      <figure class="landmark__art landmark__art--c3" aria-hidden="true">
+        <img src={c3.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="landmark__art landmark__art--c4" aria-hidden="true">
+        <img src={c4.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+      <figure class="landmark__art landmark__art--a2" aria-hidden="true">
+        <img src={a2.url} alt="" loading="lazy" decoding="async" />
+      </figure>
+    </article>
+  </div>
+
+  <div class="landmark__progress" aria-hidden="true">
+    <span class="landmark__dot" data-dot="1"></span>
+    <span class="landmark__dot" data-dot="2"></span>
+    <span class="landmark__dot" data-dot="3"></span>
+  </div>
 </SectionWrapper>

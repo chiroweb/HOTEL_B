@@ -1,127 +1,123 @@
 /* ============================================================================
- * COAST / PROLOGUE — centered editorial video frame.
+ * COAST / PROLOGUE — editorial cover-page composition.
  *
- * The frame is a finite, bordered window into the coast — not a full-bleed
- * image. This is the magazine-spread register: user "looks at" the coast
- * (editorial distance) rather than being placed "inside" it (advertorial
- * immersion). All other sections compose around the same logic.
+ * Plain ivory background — no video, no full-bleed photo backdrop. The
+ * section reads as a magazine cover spread:
  *
- * Layout:
- *   • Section index (sections.css default): top-left absolute.
- *   • Frame:        centered, 60vw width, 16:9, 1px hairline border.
- *   • Copy + pause: below the frame, left-aligned to the frame edge.
+ *   • Top:    section index (top-left), brand mark (top-left), nav bar.
+ *   • Upper:  large display heading "Songjeong Coast" — center, dark ink.
+ *   • Center: editorial frame (16:9 hairline-bordered photo).
+ *   • Sides:  short italic note (left), coordinate meta (right).
+ *   • Lower:  three-column rail — EST. mark, tagline, page numerals.
  *
- * LCP element is the <Picture> poster inside the frame (decoding=sync,
- * fetchpriority=high). The <video> mounts inside the same frame on
- * window.load and fades over the poster — the LCP measurement is unchanged.
+ * Reduced-motion: identical layout (the entrance reveal is the only
+ * thing motion controls).
  * ========================================================================== */
 
 #coast {
-  display: grid;
-  grid-template-areas:
-    'frame'
-    'copy'
-    'pause';
-  grid-template-rows: auto auto auto;
-  align-content: center;
-  justify-items: center;
-  gap: clamp(1.25rem, 3.5vh, 2.5rem);
   background: var(--color-ivory);
   color: var(--color-ink);
   min-height: 100svh;
-  padding: clamp(4rem, 12vh, 8rem) clamp(2rem, 6vw, 6rem) clamp(2rem, 8vh, 4rem);
+  height: 100svh;
   position: relative;
   overflow: hidden;
-}
-
-/* Backdrop photo (PROLOGUE-01) — sits behind the editorial frame so the
-   section's outer area carries the coast atmosphere instead of flat ivory.
-   A soft ivory veil keeps the frame the focal point and protects the copy
-   contrast. */
-.coast__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.coast__bg picture,
-.coast__bg img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.coast__bg img {
-  object-fit: cover;
-  object-position: center;
-  filter: saturate(0.92);
-}
-
-.coast__bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(244, 239, 230, 0.62) 0%,
-    rgba(244, 239, 230, 0.78) 50%,
-    rgba(244, 239, 230, 0.92) 100%
-  );
-}
-
-#coast > .section__index,
-#coast > .section__heading,
-#coast > .section__body,
-#coast > .coast__pause {
-  position: relative;
-  z-index: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-items: center;
+  padding:
+    clamp(2.5rem, 6vh, 4rem)
+    clamp(1.5rem, 5vw, 4rem)
+    clamp(1.5rem, 4vh, 3rem);
+  gap: clamp(0.75rem, 2vh, 1.5rem);
 }
 
 #coast.is-stub {
   display: grid;
 }
 
-/* section__body is `display: contents` (sections.css default), so its
-   children (.coast__frame, .coast__pause) participate directly in the
-   section's grid via grid-area. */
-#coast .coast__frame {
-  grid-area: frame;
-}
-
-#coast .coast__pause {
-  grid-area: pause;
-  width: min(60vw, 60rem);
-  justify-self: center;
-}
-
+/* Display heading — sits at the top of the section, centered, dark ink. */
 #coast .section__heading {
-  grid-area: copy;
+  grid-row: 1;
   display: grid;
-  gap: 0.625rem;
-  width: min(56vw, 54rem);
-  text-align: left;
-  /* Break the frame-aligned left edge — copy nudges left and pulls up so
-     it overlaps the frame's lower-left corner instead of stacking flush
-     beneath. Reads as overlapping plates, not two boxes sharing an axis. */
-  justify-self: start;
-  margin: calc(-1 * clamp(2.5rem, 7vh, 4.5rem)) 0 0 clamp(1.5rem, 5vw, 4rem);
+  gap: 0.4rem;
+  text-align: center;
+  justify-self: center;
+  margin: 0;
+  padding: 0;
+  max-width: min(80rem, 90vw);
   z-index: 2;
   position: relative;
 }
 
-@media (max-width: 768px) {
-  #coast .section__heading,
-  #coast .coast__pause {
-    width: 90vw;
-  }
+.coast__display {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: clamp(2.75rem, 8.5vw, 6.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  /* Reset any leftover ivory + stroke styling from the previous overlay. */
+  -webkit-text-stroke: 0;
+  text-shadow: none;
 }
 
-/* Frame ---------------------------------------------------------------- */
+.coast__display-ko {
+  margin: 0;
+  color: var(--color-ink);
+  opacity: 0.6;
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  letter-spacing: 0.04em;
+  text-shadow: none;
+}
 
+/* Stage row — the centered frame plus its two side captions. */
+.coast__stage {
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  z-index: 1;
+}
+
+.coast__side {
+  font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
+  font-style: italic;
+  font-size: clamp(0.7rem, 0.95vw, 0.85rem);
+  line-height: 1.5;
+  color: var(--color-ink);
+  opacity: 0.62;
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  max-width: 11rem;
+}
+
+.coast__side--left {
+  justify-self: end;
+  text-align: right;
+}
+
+.coast__side--right {
+  justify-self: start;
+  text-align: left;
+  font-style: normal;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: clamp(0.625rem, 0.8vw, 0.75rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coast__side-mute {
+  opacity: 0.7;
+}
+
+/* Frame — centered photo with hairline border. */
 .coast__frame {
   position: relative;
   width: min(60vw, 60rem);
@@ -129,68 +125,113 @@
   overflow: hidden;
   background: var(--color-bone);
   border: var(--hairline) solid var(--color-hair);
+  justify-self: center;
 }
 
-@media (max-width: 768px) {
-  .coast__frame {
-    width: 90vw;
-  }
-}
-
+.coast__frame picture,
 .coast__frame img,
 .coast__frame video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
   display: block;
 }
 
+.coast__frame img,
+.coast__frame video {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Video mounts on top of the poster after window.load and cross-fades in.
+   The poster stays underneath as the LCP candidate. */
 .coast__frame video {
   opacity: 0;
   transition: opacity 240ms var(--ease-editorial);
 }
 
-/* Copy ----------------------------------------------------------------- */
+.coast__frame video[data-playing='true'] {
+  opacity: 1;
+}
 
-#coast .section__heading .display-lg {
-  margin: 0;
+@media (prefers-reduced-motion: reduce) {
+  .coast__frame video {
+    display: none !important;
+  }
+}
+
+/* Bottom rail — three columns aligned to the lower edge. */
+.coast__rail {
+  grid-row: 3;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: clamp(1rem, 3vw, 2rem);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: clamp(0.625rem, 0.8vw, 0.75rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--color-ink);
+  opacity: 0.78;
+  z-index: 2;
+  position: relative;
 }
 
-#coast .section__heading .display-ko-md {
-  color: var(--color-ink);
-  opacity: 0.72;
-  margin: 0;
+.coast__rail-item--left {
+  justify-self: start;
 }
 
-/* Pause control sits below the copy, brass-hinted with a 1px lead. */
-.coast__pause {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+.coast__rail-item--center {
+  justify-self: center;
+  text-align: center;
+  letter-spacing: 0.16em;
+  max-width: 40rem;
 }
 
-.coast__pause::before {
-  content: '';
-  display: block;
-  width: clamp(1.5rem, 3vw, 2.5rem);
-  height: var(--hairline);
-  background: var(--color-brass);
-  flex-shrink: 0;
+.coast__rail-item--right {
+  justify-self: end;
+  text-align: right;
 }
 
 #coast .section__index {
   z-index: 3;
 }
 
-/* Reduced-motion: video element never mounts (prologue.ts gate); poster
-   stays as the only visual. */
-@media (prefers-reduced-motion: reduce) {
-  .coast__frame video {
-    display: none !important;
+@media (max-width: 768px) {
+  #coast {
+    grid-template-rows: auto auto auto;
+    padding: 5rem 1rem 2rem;
+    gap: 1.25rem;
+    height: auto;
+    min-height: 100svh;
+  }
+  .coast__display {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+  .coast__stage {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .coast__frame {
+    width: 92vw;
+  }
+  .coast__side--left,
+  .coast__side--right {
+    justify-self: center;
+    text-align: center;
+    max-width: none;
+  }
+  .coast__rail {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .coast__rail-item--left,
+  .coast__rail-item--right,
+  .coast__rail-item--center {
+    justify-self: center;
+    text-align: center;
   }
 }
